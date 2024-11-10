@@ -1,8 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 HOSTER=JoshuaDoes
-HOST="https://joshuado.es/winehangover"
-VER="v1.10.0"
+REPO="https://github.com/JoshuaDoes/winehangover-image"
+BRANCH=dev
+VER="v1.10.1"
 
 INST="$HOME/.winehangover"
 CACHE="$INST/.cache"
@@ -76,7 +77,7 @@ info() {
   echo "  Termux/Hangover Install & Update"
   echo "    Hosted by $HOSTER"
   echo "    > $VER"
-  echo "  HOST: $HOST"
+  echo "  REPO: $REPO"
 }
 
 stopx
@@ -152,7 +153,7 @@ echo ""
 echo "  Downloading!"
 pkg install -y git
 if [ ! -d $CACHE ]; then
-  git clone https://github.com/JoshuaDoes/winehangover-image -b dev $CACHE
+  git clone "$REPO" -b $BRANCH $CACHE
 fi
 pushd $CACHE
 git pull

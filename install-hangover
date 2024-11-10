@@ -1,6 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/bash
-HOST="https://joshuado.es/winehangover"
-INST="$HOME/.winehangover/.cache"
+HOST="https://raw.githubusercontent.com/JoshuaDoes/winehangover-image/refs/heads/dev"
+INST="$TMPDIR"
 SCRIPT="hangover-installer"
 
 pkg install -y wget
@@ -8,3 +8,4 @@ mkdir -p "$INST"
 wget -O "$INST/$SCRIPT" "$HOST/$SCRIPT"
 chmod +x "$INST/$SCRIPT"
 bash "$INST/$SCRIPT"
+rm "$INST/$SCRIPT"
