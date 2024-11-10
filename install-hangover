@@ -1,5 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
-HOST="https://raw.githubusercontent.com/JoshuaDoes/winehangover-image/refs/heads/dev"
+HOST="https://joshuado.es/winehangover"
 INST="$TMPDIR"
 SCRIPT="hangover-installer"
 
