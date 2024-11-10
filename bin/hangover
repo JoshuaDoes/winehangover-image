@@ -42,6 +42,12 @@ info() {
 
 echo ""
 if [ -z $HANGOVERDBG ]; then
+  pushd() {
+    command pushd "$@" > /dev/null
+  }
+  popd() {
+    command popd "$@" > /dev/null
+  }
   wine() {
     command wine "$@" > /dev/null 2>&1
   }
