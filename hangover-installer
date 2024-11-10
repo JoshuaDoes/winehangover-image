@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.5"
+VER="v1.10.6"
 
 INST="$HOME/.winehangover"
 CACHE="$INST/.cache"
@@ -198,7 +198,7 @@ echo "  > Installing FEX-Emu"
 cp $CACHE/fex/libarm64ecfex.dll $CACHE/fex/libwow64fex.dll $WINELIBWIN/
 echo "  > Installing box64 w/ Strongmem + safe/fast flags"
 cp $CACHE/box64/box64cpu.dll $WINELIBWIN/
-echo "  > Installing libraries"
+echo "  > Copying libraries from Termux"
 mkdir test
 pushd test
 cp $PREFIX/lib/libxcb* $PREFIX/lib/libfontconfig* $PREFIX/lib/libfreetype* \
@@ -239,30 +239,30 @@ done
 
 mkdir $C/bin
 
-echo "  > Installing vulkaninfo"
+echo "  > Installing vulkaninfo (x64)"
 cp $CACHE/bin/windows/vulkaninfo-x64.exe $C/bin/
-echo "  > Installing Coreinfo"
+echo "  > Installing Coreinfo (x64)"
 cp $CACHE/bin/windows/Coreinfo64.exe $C/bin/
-echo "  > Installing Explorer++"
+echo "  > Installing Explorer++ (x64)"
 cp $CACHE/bin/windows/Explorer++.exe $C/bin/
 
 startx
 
-echo "  > Installing 7-Zip"
+echo "  > Installing 7-Zip (arm64)"
 wine $CACHE/bin/windows/7z-latest-arm64.exe /S /D="C:\Program Files\7-Zip"
-echo "  > Installing Wine Gecko"
+echo "  > Installing VLC Media Player (arm64)"
+wine msiexec /i $CACHE/bin/windows/vlc-dev-latest-arm64.msi /quiet /qn /norestart
+echo "  > Installing Wine Gecko (x64)"
 wine msiexec /i $CACHE/bin/windows/wine-gecko-latest-x86_64.msi /quiet /qn /norestart
-echo "  > Installing Wine Mono"
+echo "  > Installing Wine Mono (x86)"
 wine msiexec /i $CACHE/bin/windows/wine-mono-latest-x86.msi /quiet /qn /norestart
 
 echo "  > Installing winetricks"
 cp $CACHE/bin/winetricks $WINEBIN/
 chmod +x $WINEBIN/winetricks
 
-echo "  > Installing Microsoft Paint"
+echo "  > Installing Microsoft Paint (x86)"
 winetricks arch=64 apps mspaint
-echo "  > Installing VLC Media Player"
-winetricks arch=64 apps vlc
 
 stopx
 
