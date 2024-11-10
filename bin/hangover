@@ -3,17 +3,10 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.4"
-
-info() {
-  echo ""
-  echo "  Termux/Hangover Launcher"
-  echo "    Hosted by $HOSTER"
-  echo "    > $VER"
-  echo "  REPO: $REPO"
-}
+VER="v1.10.5"
 
 export WINEPREFIX=$HOME/.winehangover
+export CACHE=$WINEPREFIX/.cache
 export WINEPATH=$WINEPREFIX/wine
 export TESTPATH=$WINEPREFIX/test
 export WINEBIN=$WINEPATH/arm64-v8a/bin
@@ -33,6 +26,19 @@ fi
 
 export DXVK_HUD=version,fps,api,gpuload,devinfo,compiler,scale=0.65
 export MESA_VK_WSI_PRESENT_MODE=mailbox
+
+info() {
+  echo ""
+  echo "  Termux/Hangover Launcher"
+  echo "    Hosted by $HOSTER"
+  echo "    > $VER"
+  echo "  REPO: $REPO"
+  echo ""
+  echo "Most recent changelog message:"
+  pushd $CACHE
+  echo "  $(git log -1 --pretty=format:%B | cat)"
+  popd
+}
 
 echo ""
 if [ -z $HANGOVERDBG ]; then

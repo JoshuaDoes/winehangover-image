@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.4"
+VER="v1.10.5"
 
 INST="$HOME/.winehangover"
 CACHE="$INST/.cache"
@@ -155,9 +155,16 @@ pkg install -y git
 if [ ! -d $CACHE/.git ]; then
   rm -rf $CACHE
   git clone "$REPO" -b $BRANCH $CACHE
+else
+  pushd $CACHE
+  git pull
+  popd
 fi
+
+echo ""
+echo "Most recent changelog message:"
 pushd $CACHE
-git pull
+echo "  $(git log -1 --pretty=format:%B | cat)"
 popd
 
 mkdir -p $INST
