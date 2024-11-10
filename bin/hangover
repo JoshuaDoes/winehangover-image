@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.3"
+VER="v1.10.4"
 
 info() {
   echo ""
@@ -79,7 +79,7 @@ fi
 
 if [ -z "$DESHELL" ]; then
   PS3='  What should we launch on startup? (1-4) '
-  menuvar=("Wine Explorer" "Explorer++" "winecfg" "vulkaninfo" "Exit")
+  menuvar=("Wine Explorer" "Explorer++" "7-Zip" "winecfg" "vulkaninfo" "Exit")
   select menuvar in "${menuvar[@]}"
   do
     case $menuvar in
@@ -88,6 +88,9 @@ if [ -z "$DESHELL" ]; then
         break;;
       "Explorer++")
         export DESHELL=explorer++
+        break;;
+      "7-Zip")
+        export DESHELL=7z
         break;;
       "winecfg")
         export DESHELL=winecfg
@@ -136,6 +139,8 @@ start() {
         explorer++)
           wine explorer /desktop=shell,-1x-1 $C/bin/Explorer++.exe &
           ;;
+        7z)
+          wine explorer /desktop=shell,-1x-1 "$C/Program Files/7-Zip/7zFM.exe" &
         winecfg)
           wine explorer /desktop=shell,-1x-1 winecfg &
           ;;
@@ -162,6 +167,9 @@ start() {
         ;;
       explorer++)
         wine $C/bin/Explorer++.exe &
+        ;;
+      7z)
+        wine "$C/Program Files/7-Zip/7zFM.exe" &
         ;;
       winecfg)
         winecfg &
