@@ -33,7 +33,7 @@ mv() {
   command mv "$@" >/dev/null 2>&1
 }
 unzip() {
-  command unzip "$@" >/dev/null 2>&1
+  command unzip -o "$@" >/dev/null 2>&1
 }
 pkg() {
   command pkg "$@" >/dev/null 2>&1
