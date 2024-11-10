@@ -1,15 +1,16 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 HOSTER=JoshuaDoes
-HOST="https://joshuado.es/winehangover"
-VER="v1.10.1"
+REPO="https://github.com/JoshuaDoes/winehangover-image"
+BRANCH=dev
+VER="v1.10.2"
 
 info() {
   echo ""
   echo "  Termux/Hangover Launcher"
   echo "    Hosted by $HOSTER"
   echo "    > $VER"
-  echo "  HOST: $HOST"
+  echo "  REPO: $REPO"
 }
 
 export WINEPREFIX=$HOME/.winehangover
@@ -122,6 +123,9 @@ start() {
 
   export LD_LIBRARY_PATH="$TESTPATH"
   export PULSE_SERVER=127.0.0.1
+
+  # Import Hangover registry on every boot
+  wine regedit /s $WINEPREFIX/hangover.reg
 
   case $DE in
     wine)

@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.1"
+VER="v1.10.2"
 
 INST="$HOME/.winehangover"
 CACHE="$INST/.cache"
@@ -214,9 +214,8 @@ chmod +x ~/bin/install-hangover
 echo "  > Installing prefix"
 wineboot
 
-echo "  > Importing registry"
+echo "  > Installing registry"
 cp $CACHE/reg/hangover.reg $INST/
-wine regedit /s $INST/hangover.reg
 
 MNT="$INST/dosdevices"
 C="$INST/drive_c"
