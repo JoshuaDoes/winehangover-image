@@ -41,18 +41,24 @@ pkg() {
 dpkg() {
   command dpkg "$@" >/dev/null 2>&1
 }
-#git() {
-#  command git "$@" >/dev/null 2>&1
-#}
-#wine() {
-#  command $WINEBIN/wine "$@" >/dev/null 2>&1
-#}
+git() {
+  command git "$@"
+}
+wine() {
+  LD_LIBRARY_PATH="$WINEPREFIX/test" \
+  PATH="$WINEBIN:$PATH" \
+    command $WINEBIN/wine "$@" #>/dev/null 2>&1
+}
 wineboot() {
-  command $WINEBIN/wineboot "$@" >/dev/null 2>&1
+  LD_LIBRARY_PATH="$WINEPREFIX/test" \
+  PATH="$WINEBIN:$PATH" \
+    command $WINEBIN/wineboot "$@" >/dev/null 2>&1
 }
 winetricks() {
-  #command $WINEBIN/winetricks "$@" >/dev/null 2>&1
-  #command $WINEBIN/winetricks "$@"
+  #LD_LIBRARY_PATH="$WINEPREFIX/test" \
+  #PATH="$WINEBIN:$PATH" \
+    #command $WINEBIN/winetricks "$@" >/dev/null 2>&1
+    #command $WINEBIN/winetricks "$@"
   echo "  * Winetricks isn't working yet, so skipping"
 }
 wget() {
@@ -206,6 +212,7 @@ mkdir test
 pushd test
 cp $PREFIX/lib/libxcb* $PREFIX/lib/libfontconfig* $PREFIX/lib/libfreetype* \
    $PREFIX/lib/libX* $PREFIX/lib/libvulkan* $PREFIX/lib/libpulse* \
+   $PREFIX/lib/libgnutls* \
  .
 popd
 
