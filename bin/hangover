@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.6"
+VER="v1.10.7"
 
 export WINEPREFIX=$HOME/.winehangover
 export CACHE=$WINEPREFIX/.cache
@@ -41,21 +41,27 @@ info() {
 }
 
 echo ""
+winedesktop() {
+  wine explorer /desktop=shell,-1x-1 "$1"
+}
 if [ -z $HANGOVERDBG ]; then
   pushd() {
-    command pushd "$@" > /dev/null
+    command pushd "$@" >/dev/null
   }
   popd() {
-    command popd "$@" > /dev/null
+    command popd "$@" >/dev/null
   }
   wine() {
-    command wine "$@" > /dev/null 2>&1
+    command wine "$@" >/dev/null 2>&1
+  }
+  winedesktop() {
+    wine explorer /desktop=shell,-1x-1 "$@" >/dev/null 2>&1
   }
   openbox-session() {
-    command openbox-session > /dev/null 2>&1
+    command openbox-session >/dev/null 2>&1
   }
   xfce4-session() {
-    command xfce4-session > /dev/null 2>&1
+    command xfce4-session >/dev/null 2>&1
   }
 else
   echo "  > RUNNING IN DEBUG MODE!"
@@ -90,7 +96,7 @@ fi
 
 if [ -z "$DESHELL" ]; then
   PS3='  What should we launch on startup? (1-5) '
-  menuvar=("Wine Explorer" "Explorer++" "7-Zip" "winecfg" "vulkaninfo" "Exit")
+  menuvar=("Wine Explorer" "Explorer++" "7-Zip" "VLC Media Player" "winecfg" "vulkaninfo" "Exit")
   select menuvar in "${menuvar[@]}"
   do
     case $menuvar in
@@ -102,6 +108,9 @@ if [ -z "$DESHELL" ]; then
         break;;
       "7-Zip")
         export DESHELL=7z
+        break;;
+      "VLC Media Player")
+        export DESHELL=vlc
         break;;
       "winecfg")
         export DESHELL=winecfg
@@ -145,13 +154,16 @@ start() {
     wine)
       case $DESHELL in
         wine)
-          wine explorer /desktop=shell,-1x-1 explorer &
+          winedesktop explorer &
           ;;
         explorer++)
-          wine explorer /desktop=shell,-1x-1 $C/bin/Explorer++.exe &
+          winedesktop $C/bin/Explorer++.exe &
           ;;
         7z)
-          wine explorer /desktop=shell,-1x-1 "$C/Program Files/7-Zip/7zFM.exe" &
+          winedesktop "$C/Program Files/7-Zip/7zFM.exe" &
+          ;;
+        vlc)
+          winedesktop "$C/Program Files/VideoLAN/VLC/vlc.exe" -I qt &
           ;;
         winecfg)
           wine explorer /desktop=shell,-1x-1 winecfg &
@@ -182,6 +194,9 @@ start() {
         ;;
       7z)
         wine "$C/Program Files/7-Zip/7zFM.exe" &
+        ;;
+      vlc)
+        wine "$C/Program Files/VideoLAN/VLC/vlc.exe" -I qt &
         ;;
       winecfg)
         winecfg &

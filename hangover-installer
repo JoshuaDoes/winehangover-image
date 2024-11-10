@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.6"
+VER="v1.10.7"
 
 INST="$HOME/.winehangover"
 CACHE="$INST/.cache"
@@ -18,37 +18,37 @@ clear
 
 # Hide outputs when unnecessary
 pushd() {
-  command pushd "$@" > /dev/null
+  command pushd "$@" >/dev/null
 }
 popd() {
-  command popd "$@" > /dev/null
+  command popd "$@" >/dev/null
 }
 mkdir() {
-  command mkdir "$@" > /dev/null 2>&1
+  command mkdir "$@" >/dev/null 2>&1
 }
 rm() {
-  command rm "$@" > /dev/null 2>&1
+  command rm "$@" >/dev/null 2>&1
 }
 mv() {
-  command mv "$@" > /dev/null 2>&1
+  command mv "$@" >/dev/null 2>&1
 }
 pkg() {
-  command pkg "$@" > /dev/null 2>&1
+  command pkg "$@" >/dev/null 2>&1
 }
 dpkg() {
-  command dpkg "$@" > /dev/null 2>&1
+  command dpkg "$@" >/dev/null 2>&1
 }
 #git() {
-#  command git "$@" > /dev/null 2>&1
+#  command git "$@" >/dev/null 2>&1
 #}
 wine() {
-  command $WINEBIN/wine "$@" > /dev/null 2>&1
+  command $WINEBIN/wine "$@" >/dev/null 2>&1
 }
 wineboot() {
-  command $WINEBIN/wineboot "$@" > /dev/null 2>&1
+  command $WINEBIN/wineboot "$@" >/dev/null 2>&1
 }
 winetricks() {
-  #command $WINEBIN/winetricks "$@" > /dev/null 2>&1
+  #command $WINEBIN/winetricks "$@" >/dev/null 2>&1
   #command $WINEBIN/winetricks "$@"
   echo "  * Winetricks isn't working yet, so skipping"
 }
@@ -60,7 +60,7 @@ wget2() {
 }
 startx() {
   sleep 1
-  termux-x11 $DISPLAY &
+  termux-x11 -retro $DISPLAY &
   export TXPID=$!
   #am start --user 0 -n com.termux.x11/.MainActivity >/dev/null 2>&1
   sleep 1
@@ -251,11 +251,11 @@ startx
 echo "  > Installing 7-Zip (arm64)"
 wine $CACHE/bin/windows/7z-latest-arm64.exe /S /D="C:\Program Files\7-Zip"
 echo "  > Installing VLC Media Player (arm64)"
-wine msiexec /i $CACHE/bin/windows/vlc-dev-latest-arm64.msi /quiet /qn /norestart
+wine msiexec /i $CACHE/bin/windows/vlc-dev-latest-arm64.msi /quiet /qn /norestart TARGETDIR="C:\Program Files\VideoLAN\VLC"
 echo "  > Installing Wine Gecko (x64)"
-wine msiexec /i $CACHE/bin/windows/wine-gecko-latest-x86_64.msi /quiet /qn /norestart
+wine msiexec /i $CACHE/bin/windows/wine-gecko-latest-x86_64.msi /quiet /qn /norestart TARGETDIR="C:\Program Files\Wine\Gecko"
 echo "  > Installing Wine Mono (x86)"
-wine msiexec /i $CACHE/bin/windows/wine-mono-latest-x86.msi /quiet /qn /norestart
+wine msiexec /i $CACHE/bin/windows/wine-mono-latest-x86.msi /quiet /qn /norestart TARGETDIR="C:\Program Files\Wine\Mono"
 
 echo "  > Installing winetricks"
 cp $CACHE/bin/winetricks $WINEBIN/
