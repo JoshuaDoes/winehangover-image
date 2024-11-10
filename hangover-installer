@@ -150,6 +150,7 @@ fi
 
 echo ""
 echo "  Downloading!"
+pkg install -y git
 if [ ! -d $CACHE ]; then
   git clone https://github.com/JoshuaDoes/winehangover-image -b dev $CACHE
 fi
