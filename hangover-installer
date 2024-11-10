@@ -5,13 +5,25 @@ REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
 VER="v1.10.8"
 
-INST="$HOME/.winehangover"
-CACHE="$INST/.cache"
-WINEBIN="$INST/wine/arm64-v8a/bin"
-WINELIBWIN="$INST/wine/arm64-v8a/lib/wine/aarch64-windows"
+export WINEPREFIX="$HOME/.winehangover"
+export CACHE="$WINEPREFIX/.cache"
+export WINEPATH="$WINEPREFIX/wine"
+export WINEBIN="$WINEPATH/arm64-v8a/bin"
+export WINELIB="$WINEPATH/arm64-v8a/lib/wine"
+export WINELIBWIN="$WINELIB/aarch64-windows"
+export TESTPATH="$WINEPREFIX/test"
+export PATH="$WINEBIN:$PATH"
 
-export WINEPREFIX="$INST"
+export VK_ICD_FILENAMES=$PREFIX/share/vulkan/icd.d/wrapper_icd.aarch64.json
+export MESA_VK_WSI_PRESENT_MODE=mailbox
 export DISPLAY=:0
+
+export MNT="$WINEPREFIX/dosdevices"
+export C="$WINEPREFIX/drive_c"
+export T="$MNT/t:"
+export Z="$MNT/z:"
+
+export WINEARCH=win64
 
 # Screen wipe
 clear
@@ -46,17 +58,14 @@ git() {
 }
 wine() {
   LD_LIBRARY_PATH="$WINEPREFIX/test" \
-  PATH="$WINEBIN:$PATH" \
     command $WINEBIN/wine "$@" #>/dev/null 2>&1
 }
 wineboot() {
   LD_LIBRARY_PATH="$WINEPREFIX/test" \
-  PATH="$WINEBIN:$PATH" \
     command $WINEBIN/wineboot "$@" >/dev/null 2>&1
 }
 winetricks() {
   #LD_LIBRARY_PATH="$WINEPREFIX/test" \
-  #PATH="$WINEBIN:$PATH" \
     #command $WINEBIN/winetricks "$@" >/dev/null 2>&1
     #command $WINEBIN/winetricks "$@"
   echo "  * Winetricks isn't working yet, so skipping"
@@ -176,8 +185,8 @@ pushd $CACHE
 echo "  $(git log -1 --pretty=format:%B | cat)"
 popd
 
-mkdir -p $INST
-pushd $INST
+mkdir -p $WINEPREFIX
+pushd $WINEPREFIX
 
 echo ""
 echo "  Patching Hangover image unconditionally..."
@@ -231,12 +240,7 @@ echo "  > Installing prefix"
 wineboot
 
 echo "  > Installing registry"
-cp $CACHE/reg/hangover.reg $INST/
-
-MNT="$INST/dosdevices"
-C="$INST/drive_c"
-T="$MNT/t:"
-Z="$MNT/z:"
+cp $CACHE/reg/hangover.reg $WINEPREFIX/
 
 echo "  > Installing Microsoft core fonts"
 pushd $C/windows/Fonts
@@ -266,11 +270,11 @@ startx
 echo "  > Installing 7-Zip (arm64)"
 wine $CACHE/bin/windows/7z-latest-arm64.exe /S /D="C:\Program Files\7-Zip"
 echo "  > Installing VLC Media Player (arm64)"
-wine msiexec /i $CACHE/bin/windows/vlc-dev-latest-arm64.msi /quiet /qn /norestart TARGETDIR="C:\Program Files\VideoLAN\VLC"
+wine msiexec /i $CACHE/bin/windows/vlc-dev-latest-arm64.msi INSTALLDIR="C:\Program Files\VideoLAN\VLC" /quiet /qn /norestart
 echo "  > Installing Wine Gecko (x64)"
-wine msiexec /i $CACHE/bin/windows/wine-gecko-latest-x86_64.msi /quiet /qn /norestart TARGETDIR="C:\Program Files\Wine\Gecko"
+wine msiexec /i $CACHE/bin/windows/wine-gecko-latest-x86_64.msi INSTALLDIR="C:\Program Files\Wine\Gecko" /quiet /qn /norestart
 echo "  > Installing Wine Mono (x86)"
-wine msiexec /i $CACHE/bin/windows/wine-mono-latest-x86.msi /quiet /qn /norestart TARGETDIR="C:\Program Files\Wine\Mono"
+wine msiexec /i $CACHE/bin/windows/wine-mono-latest-x86.msi INSTALLDIR="C:\Program Files\Wine\Mono" /quiet /qn /norestart
 
 echo "  > Installing winetricks"
 cp $CACHE/bin/winetricks $WINEBIN/

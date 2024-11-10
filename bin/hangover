@@ -5,13 +5,17 @@ REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
 VER="v1.10.8"
 
-export WINEPREFIX=$HOME/.winehangover
-export CACHE=$WINEPREFIX/.cache
-export WINEPATH=$WINEPREFIX/wine
-export TESTPATH=$WINEPREFIX/test
-export WINEBIN=$WINEPATH/arm64-v8a/bin
+export WINEPREFIX="$HOME/.winehangover"
+export CACHE="$WINEPREFIX/.cache"
+export WINEPATH="$WINEPREFIX/wine"
+export WINEBIN="$WINEPATH/arm64-v8a/bin"
+export WINELIB="$WINEPATH/arm64-v8a/lib/wine"
+export WINELIBWIN="$WINELIB/aarch64-windows"
+export TESTPATH="$WINEPREFIX/test"
 export PATH="$WINEBIN:$PATH"
+
 export VK_ICD_FILENAMES=$PREFIX/share/vulkan/icd.d/wrapper_icd.aarch64.json
+export MESA_VK_WSI_PRESENT_MODE=mailbox
 export DISPLAY=:0
 
 export MNT="$WINEPREFIX/dosdevices"
@@ -19,13 +23,14 @@ export C="$WINEPREFIX/drive_c"
 export T="$MNT/t:"
 export Z="$MNT/z:"
 
+export WINEARCH=win64
+
 export WINEDLLOVERRIDES="d3d8,d3d9,d3d10core,d3d11,dxgi=n,b"
 if [ ! -f $C/windows/system32/d3d8.dll ]; then
   WINEDLLOVERRIDES="d3d9,d3d10,d3d10_1,d3d10core,d3d11,dxgi=n,b"
 fi
 
 export DXVK_HUD=version,fps,api,gpuload,devinfo,compiler,scale=0.65
-export MESA_VK_WSI_PRESENT_MODE=mailbox
 
 info() {
   echo ""
