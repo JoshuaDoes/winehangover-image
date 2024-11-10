@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.7"
+VER="v1.10.8"
 
 export WINEPREFIX=$HOME/.winehangover
 export CACHE=$WINEPREFIX/.cache

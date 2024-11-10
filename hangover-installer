@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.7"
+VER="v1.10.8"
 
 INST="$HOME/.winehangover"
 CACHE="$INST/.cache"
@@ -32,6 +32,9 @@ rm() {
 mv() {
   command mv "$@" >/dev/null 2>&1
 }
+unzip() {
+  command unzip "$@" >/dev/null 2>&1
+}
 pkg() {
   command pkg "$@" >/dev/null 2>&1
 }
@@ -41,9 +44,9 @@ dpkg() {
 #git() {
 #  command git "$@" >/dev/null 2>&1
 #}
-wine() {
-  command $WINEBIN/wine "$@" >/dev/null 2>&1
-}
+#wine() {
+#  command $WINEBIN/wine "$@" >/dev/null 2>&1
+#}
 wineboot() {
   command $WINEBIN/wineboot "$@" >/dev/null 2>&1
 }
@@ -182,7 +185,7 @@ pkg install -y termux-x11-nightly pulseaudio \
   freeglut glu fontconfig freetype \
   libxrandr libxcomposite libx11 libxrender libxshmfence \
   libdrm libwayland libandroid-shmem \
-  xz-utils cabextract \
+  xz-utils cabextract libgnutls \
   openbox #xfce4
 case $PLAT in
   hangover)
@@ -227,6 +230,11 @@ MNT="$INST/dosdevices"
 C="$INST/drive_c"
 T="$MNT/t:"
 Z="$MNT/z:"
+
+echo "  > Installing Microsoft core fonts"
+pushd $C/windows/Fonts
+unzip $CACHE/fonts/mscorefonts.zip
+popd
 
 echo "  > Installing DXVK x32 from $DXVKS"
 for dll in ${DXVKDLLS[@]}; do
