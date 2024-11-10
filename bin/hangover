@@ -141,6 +141,7 @@ start() {
           ;;
         7z)
           wine explorer /desktop=shell,-1x-1 "$C/Program Files/7-Zip/7zFM.exe" &
+          ;;
         winecfg)
           wine explorer /desktop=shell,-1x-1 winecfg &
           ;;
