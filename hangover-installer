@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.13"
+VER="v1.10.14"
 
 export WINEPREFIX="$HOME/.winehangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -181,8 +181,6 @@ if [ -d $TMPDIR/hangover ]; then
   rm -rf $TMPDIR/hangover
 fi
 
-startx
-
 echo ""
 echo "  Downloading!"
 pkg install -y git
@@ -225,6 +223,10 @@ case $PLAT in
     ;;
   *) echo "  > Skipping ICD";;
 esac
+
+startx
+echo ""
+
 echo "  > Installing Wine"
 rm -rf wine
 cp -R $CACHE/wine .
