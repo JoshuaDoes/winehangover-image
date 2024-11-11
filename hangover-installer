@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.14"
+VER="v1.10.15"
 
 export WINEPREFIX="$HOME/.winehangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -297,8 +297,10 @@ echo "  > Installing VLC Media Player (arm64)"
 wine $CACHE/bin/windows/vlc-dev-latest-arm64.exe /L=1033 /S /D="C:\Program Files\VideoLAN\VLC"
 echo "  > Installing Wine Gecko (x64)"
 msiexec $CACHE/bin/windows/wine-gecko-latest-x86_64.msi "C:\Program Files\Wine\Gecko"
+echo "  > Installing Wine Gecko (x86)"
+msiexec $CACHE/bin/windows/wine-gecko-latest-x86.msi "C:\Program Files (x86)\Wine\Gecko"
 echo "  > Installing Wine Mono (x86)"
-msiexec $CACHE/bin/windows/wine-mono-latest-x86.msi "C:\Program Files\Wine\Mono"
+msiexec $CACHE/bin/windows/wine-mono-latest-x86.msi "C:\Program Files (x86)\Wine\Mono"
 
 #echo "  > Installing winetricks"
 #cp $CACHE/bin/winetricks $WINEBIN/
