@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.12"
+VER="v1.10.13"
 
 export WINEPREFIX="$HOME/.winehangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -252,8 +252,13 @@ chmod +x ~/bin/hangover
 chmod +x ~/bin/hangover-debug
 chmod +x ~/bin/install-hangover
 
-echo "  > Installing prefix"
-wineboot -i
+if [ -d $C ]; then
+  echo "  > Updating the Wine prefix"
+  wineboot --update
+else
+  echo "  > Installing the Wine prefix"
+  wineboot --init
+fi
 
 echo "  > Applying Windows 11 profile to prefix"
 wine winecfg -v win11
