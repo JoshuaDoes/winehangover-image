@@ -2,3 +2,63 @@ Windows Registry Editor Version 5.00
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
 "renderer"="vulkan"
+
+[HKEY_CURRENT_USER\Control Panel\Colors]
+"ActiveBorder"="0 128 192"
+"ActiveTitle"="50 54 58"
+"AppWorkSpace"="0 128 192"
+"Background"="0 0 32"
+"ButtonAlternateFace"="64 64 128"
+"ButtonAlternativeFace"="200 0 0"
+"ButtonDkShadow"="0 0 0"
+"ButtonFace"="0 0 0"
+"ButtonHilight"="50 56 65"
+"ButtonLight"="48 54 60"
+"ButtonShadow"="0 0 0"
+"ButtonText"="255 255 255"
+"GradientActiveTitle"="0 84 224"
+"GradientInactiveTitle"="0 0 128"
+"GrayText"="155 155 155"
+"Hilight"="120 125 140"
+"HilightText"="255 255 255"
+"HotTrackingColor"="0 0 255"
+"InactiveBorder"="0 0 128"
+"InactiveTitle"="50 54 58"
+"InactiveTitleText"="255 255 255"
+"InfoText"="160 168 180"
+"InfoWindow"="0 0 255"
+"Menu"="0 0 20"
+"MenuBar"="0 0 0"
+"MenuHilight"="120 126 140"
+"MenuText"="255 255 255"
+"Scrollbar"="82 104 104"
+"TitleText"="255 255 255"
+"Window"="8 8 8"
+"WindowFrame"="0 0 64"
+"WindowText"="255 255 255"
+
+[HKEY_CURRENT_USER\Control Panel\Desktop]
+"ActiveWndTrackTimeout"=dword:00000000
+"BlockSendInputResets"="0"
+"CaretWidth"=dword:00000001
+"ClickLockTime"=dword:000004b0
+"DoubleClickHeight"="4"
+"DoubleClickWidth"="4"
+"DragFullWindows"="0"
+"DragHeight"="4"
+"DragWidth"="4"
+"FocusBorderHeight"=dword:00000001
+"FocusBorderWidth"=dword:00000001
+"FontSmoothing"="2"
+"FontSmoothingGamma"=dword:00000000
+"FontSmoothingOrientation"=dword:00000001
+"FontSmoothingType"=dword:00000001
+"ForegroundFlashCount"=dword:00000003
+"ForegroundLockTimeout"=dword:00000000
+"IconTitleWrap"="1"
+"LowPowerActive"="0"
+"MenuShowDelay"="0"
+"UserPreferencesMask"=hex:30,00,00,80,12,00,00,00
+"Wallpaper"="c:\\\\Addons\\\\Themes\\\\DarkBlue\\\\DarkBlue.bmp"
+"WheelScrollChars"="3"
+"WheelScrollLines"="3"
