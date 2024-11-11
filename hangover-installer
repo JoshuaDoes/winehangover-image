@@ -204,8 +204,8 @@ pushd $WINEPREFIX
 
 echo ""
 echo "  Patching Hangover image unconditionally..."
-#echo "  > Installing Termux:X11"
-#termux-open $CACHE/apk/termux11.apk
+echo "  > Installing Termux:X11"
+termux-open $CACHE/apk/termux11.apk
 echo "  > Installing packages"
 pkg install -y x11-repo
 pkg install -y termux-x11-nightly pulseaudio \
@@ -306,6 +306,8 @@ msiexec $CACHE/bin/windows/wine-mono-latest-x86.msi "C:\Program Files (x86)\Wine
 #cp $CACHE/bin/winetricks $WINEBIN/
 #chmod +x $WINEBIN/winetricks
 
+#echo "  > Installing .NET 6.0"
+#winetricks -q dotnetdesktop6
 #echo "  > Installing Microsoft Paint (x86)"
 #winetricks arch=64 apps mspaint
 
