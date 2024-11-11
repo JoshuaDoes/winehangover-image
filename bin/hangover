@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.11"
+VER="v1.10.12"
 
 export WINEPREFIX="$HOME/.winehangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -101,7 +101,7 @@ fi
 
 if [ -z "$DESHELL" ]; then
   PS3='  What should we launch on startup? (1-5) '
-  menuvar=("Wine Explorer" "Explorer++" "7-Zip" "winecfg" "Exit")
+  menuvar=("Wine Explorer" "Explorer++" "7-Zip" "VLC Media Player" "winecfg" "Exit")
   select menuvar in "${menuvar[@]}"
   do
     case $menuvar in
