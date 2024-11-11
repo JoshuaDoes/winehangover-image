@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.17"
+VER="v1.10.18"
 
 export WINEPREFIX="$HOME/.winehangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -47,7 +47,7 @@ info() {
 
 echo ""
 winedesktop() {
-  wine explorer /desktop=shell,-1x-1 "$1"
+  wine explorer /desktop=shell,-1x-1 "$@"
 }
 if [ -z $HANGOVERDBG ]; then
   pushd() {
@@ -101,10 +101,12 @@ fi
 
 if [ -z "$DESHELL" ]; then
   PS3='  What should we launch on startup? (1-5) '
-  menuvar=("Wine Explorer" "Explorer++" "7-Zip" "VLC Media Player" "winecfg" "Exit")
+  menuvar=("Nothing" "Wine Explorer" "Explorer++" "7-Zip" "VLC Media Player" "winecfg" "Exit")
   select menuvar in "${menuvar[@]}"
   do
     case $menuvar in
+      "Nothing")
+        break;;
       "Wine Explorer")
         export DESHELL=wine
         break;;
@@ -172,6 +174,9 @@ start() {
         winecfg)
           wine explorer /desktop=shell,-1x-1 winecfg &
           ;;
+        *)
+          winedesktop &
+          ;;
       esac
       ;;
     openbox)
@@ -187,9 +192,9 @@ start() {
 
   if [ $DE != wine ]; then
     case $DESHELL in
-      wine)
-        wine explorer &
-        ;;
+      #wine)
+        #wine explorer &
+        #;;
       explorer++)
         wine $C/bin/Explorer++.exe &
         ;;
