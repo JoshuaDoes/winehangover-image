@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.10"
+VER="v1.10.11"
 
 export WINEPREFIX="$HOME/.winehangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -79,8 +79,7 @@ winetricks() {
     command $WINEBIN/winetricks "$@" #>/dev/null 2>&1
 }
 msiexec() {
-  echo "  * Unable to install MSIs, is likely to fail :c"
-  wine msiexec /i "$1" ALLUSERS=1 INSTALLDIR="$2" /q
+  wine msiexec /i "$1" /quiet /qn /norestart
 }
 startx() {
   echo ""
