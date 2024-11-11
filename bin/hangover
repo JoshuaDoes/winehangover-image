@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.8"
+VER="v1.10.10"
 
 export WINEPREFIX="$HOME/.winehangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -101,7 +101,7 @@ fi
 
 if [ -z "$DESHELL" ]; then
   PS3='  What should we launch on startup? (1-5) '
-  menuvar=("Wine Explorer" "Explorer++" "7-Zip" "VLC Media Player" "winecfg" "vulkaninfo" "Exit")
+  menuvar=("Wine Explorer" "Explorer++" "7-Zip" "winecfg" "Exit")
   select menuvar in "${menuvar[@]}"
   do
     case $menuvar in
@@ -119,9 +119,6 @@ if [ -z "$DESHELL" ]; then
         break;;
       "winecfg")
         export DESHELL=winecfg
-        break;;
-      "vulkaninfo")
-        export DESHELL=vkinfo
         break;;
       "Exit")
         exit 0
@@ -143,6 +140,8 @@ start() {
     --exit-idle-time=-1
   export LD_PRELOAD=$LD_PRELOAD_OLD
 
+  echo ""
+  echo "  > Starting an X server"
   termux-x11 -retro $DISPLAY >/dev/null 2>&1 &
   export TXPID=$!
 
@@ -172,9 +171,6 @@ start() {
           ;;
         winecfg)
           wine explorer /desktop=shell,-1x-1 winecfg &
-          ;;
-        vkinfo)
-          wine explorer /desktop=shell,-1x-1 $C/bin/vulkaninfo-x64.exe &
           ;;
       esac
       ;;
@@ -206,9 +202,6 @@ start() {
       winecfg)
         winecfg &
         ;;
-      vkinfo)
-        wine $C/bin/vulkaninfo-x64.exe &
-        ;;
     esac
 
     sleep 1
@@ -228,11 +221,18 @@ start() {
 }
 
 stop() {
+  echo ""
+  echo "  > Stopping the X server"
   am broadcast -a com.termux.x11.ACTION_STOP -p com.termux.x11 >/dev/null 2>&1
   pkill -x com.termux.x11 >/dev/null 2>&1
   kill $(jobs -p) >/dev/null 2>&1
   kill $TXPID >/dev/null 2>&1
   sleep 1
+  echo "  > Shutting down Wine prefix"
+  wineboot --end-session >/dev/null 2>&1
+  wineboot --kill --force >/dev/null 2>&1
+  wineserver --kill=9 >/dev/null 2>&1
+  wineserver --wait >/dev/null 2>&1
 }
 
 stop

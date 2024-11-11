@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.8"
+VER="v1.10.10"
 
 export WINEPREFIX="$HOME/.winehangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -36,7 +36,7 @@ popd() {
   command popd "$@" >/dev/null
 }
 mkdir() {
-  command mkdir "$@" >/dev/null 2>&1
+  command mkdir -p "$@" >/dev/null 2>&1
 }
 rm() {
   command rm "$@" >/dev/null 2>&1
@@ -53,42 +53,56 @@ pkg() {
 dpkg() {
   command dpkg "$@" >/dev/null 2>&1
 }
-git() {
-  command git "$@"
-}
-wine() {
-  LD_LIBRARY_PATH="$WINEPREFIX/test" \
-    command $WINEBIN/wine "$@" #>/dev/null 2>&1
-}
-wineboot() {
-  LD_LIBRARY_PATH="$WINEPREFIX/test" \
-    command $WINEBIN/wineboot "$@" >/dev/null 2>&1
-}
-winetricks() {
-  #LD_LIBRARY_PATH="$WINEPREFIX/test" \
-    #command $WINEBIN/winetricks "$@" >/dev/null 2>&1
-    #command $WINEBIN/winetricks "$@"
-  echo "  * Winetricks isn't working yet, so skipping"
-}
 wget() {
   command wget "$1" --timestamping --quiet --show-progress
 }
 wget2() {
   command wget "$1" -O "$2" --timestamping --quiet --show-progress
 }
+git() {
+  command git "$@"
+}
+wine() {
+  LD_LIBRARY_PATH="$WINEPREFIX/test" \
+    command $WINEBIN/wine "$@" >/dev/null 2>&1
+}
+wineboot() {
+  LD_LIBRARY_PATH="$WINEPREFIX/test" \
+    command $WINEBIN/wineboot "$@" >/dev/null 2>&1
+}
+wineserver() {
+  LD_LIBRARY_PATH="$WINEPREFIX/test" \
+    command $WINEBIN/wineserver "$@" >/dev/null 2>&1
+}
+winetricks() {
+  LD_LIBRARY_PATH="$WINEPREFIX/test" \
+    command $WINEBIN/winetricks "$@" #>/dev/null 2>&1
+}
+msiexec() {
+  echo "  * Unable to install MSIs, is likely to fail :c"
+  wine msiexec /i "$1" ALLUSERS=1 INSTALLDIR="$2" /q
+}
 startx() {
-  sleep 1
-  termux-x11 -retro $DISPLAY &
+  echo ""
+  echo "  > Starting an X server"
+  termux-x11 -retro $DISPLAY >/dev/null 2>&1 &
   export TXPID=$!
   #am start --user 0 -n com.termux.x11/.MainActivity >/dev/null 2>&1
   sleep 1
 }
 stopx() {
+  echo ""
+  echo "  > Stopping the X server"
   #am broadcast -a com.termux.x11.ACTION_STOP -p com.termux.x11 >/dev/null 2>&1
   pkill -x com.termux.x11 >/dev/null 2>&1
   kill $(jobs -p) >/dev/null 2>&1
   kill $TXPID >/dev/null 2>&1
   sleep 1
+  echo "  > Shutting down Wine prefix"
+  wineboot --end-session >/dev/null 2>&1
+  wineboot --kill --force >/dev/null 2>&1
+  wineserver --kill=9 >/dev/null 2>&1
+  wineserver --wait >/dev/null 2>&1
 }
 info() {
   echo ""
@@ -99,6 +113,7 @@ info() {
 }
 
 stopx
+clear
 info
 echo ""
 
@@ -167,6 +182,8 @@ if [ -d $TMPDIR/hangover ]; then
   rm -rf $TMPDIR/hangover
 fi
 
+startx
+
 echo ""
 echo "  Downloading!"
 pkg install -y git
@@ -180,12 +197,12 @@ else
 fi
 
 echo ""
-echo "Most recent changelog message:"
+echo "  Most recent changelog message:"
 pushd $CACHE
-echo "  $(git log -1 --pretty=format:%B | cat)"
+echo "    $(git log -1 --pretty=format:%B | cat)"
 popd
 
-mkdir -p $WINEPREFIX
+mkdir $WINEPREFIX
 pushd $WINEPREFIX
 
 echo ""
@@ -237,7 +254,10 @@ chmod +x ~/bin/hangover-debug
 chmod +x ~/bin/install-hangover
 
 echo "  > Installing prefix"
-wineboot
+wineboot -i
+
+echo "  > Applying Windows 11 profile to prefix"
+wine winecfg -v win11
 
 echo "  > Installing registry"
 cp $CACHE/reg/hangover.reg $WINEPREFIX/
@@ -265,25 +285,24 @@ cp $CACHE/bin/windows/Coreinfo64.exe $C/bin/
 echo "  > Installing Explorer++ (x64)"
 cp $CACHE/bin/windows/Explorer++.exe $C/bin/
 
-startx
-
 echo "  > Installing 7-Zip (arm64)"
 wine $CACHE/bin/windows/7z-latest-arm64.exe /S /D="C:\Program Files\7-Zip"
 echo "  > Installing VLC Media Player (arm64)"
-wine msiexec /i $CACHE/bin/windows/vlc-dev-latest-arm64.msi INSTALLDIR="C:\Program Files\VideoLAN\VLC" /quiet /qn /norestart
+mkdir "$C/Program Files/VideoLAN/VLC"
+msiexec $CACHE/bin/windows/vlc-dev-latest-arm64.msi "C:\Program Files\VideoLAN\VLC"
 echo "  > Installing Wine Gecko (x64)"
-wine msiexec /i $CACHE/bin/windows/wine-gecko-latest-x86_64.msi INSTALLDIR="C:\Program Files\Wine\Gecko" /quiet /qn /norestart
+mkdir "$C/Program Files/Wine/Gecko"
+msiexec $CACHE/bin/windows/wine-gecko-latest-x86_64.msi "C:\Program Files\Wine\Gecko"
 echo "  > Installing Wine Mono (x86)"
-wine msiexec /i $CACHE/bin/windows/wine-mono-latest-x86.msi INSTALLDIR="C:\Program Files\Wine\Mono" /quiet /qn /norestart
+mkdir "$C/Program Files/Wine/Mono"
+msiexec $CACHE/bin/windows/wine-mono-latest-x86.msi "C:\Program Files\Wine\Mono"
 
-echo "  > Installing winetricks"
-cp $CACHE/bin/winetricks $WINEBIN/
-chmod +x $WINEBIN/winetricks
+#echo "  > Installing winetricks"
+#cp $CACHE/bin/winetricks $WINEBIN/
+#chmod +x $WINEBIN/winetricks
 
-echo "  > Installing Microsoft Paint (x86)"
-winetricks arch=64 apps mspaint
-
-stopx
+#echo "  > Installing Microsoft Paint (x86)"
+#winetricks arch=64 apps mspaint
 
 echo "  > Mounting T: to $HOME"
 rm "$T"
@@ -297,8 +316,8 @@ echo "  Install complete!"
 echo ""
 echo "  Cached for reinstalls at:"
 echo "    $CACHE"
-echo ""
 
+echo ""
 echo "  Launch Hangover like so:"
 echo "    hangover"
 echo "  If you need to read the debug log or pipe it to a file:"
@@ -316,8 +335,8 @@ echo "    settings put global settings_enable_monitor_phantom_procs false"
 echo ""
 echo "  Finally, raise the limit to infinity just to be safe:"
 echo "    device_config put activity_manager max_phantom_processes 2147483647"
-echo ""
 
+echo ""
 FOUND_HO=1
 command -v hangover >/dev/null 2>&1 || {
   FOUND_HO=0
@@ -334,8 +353,8 @@ if [ $FOUND_HO -eq 0 ]; then
 else
   echo "  * Found Hangover in PATH!"
 fi
-echo ""
 
+echo ""
 FOUND_W=1
 command -v wineserver >/dev/null 2>&1 || {
   FOUND_W=0
@@ -352,8 +371,8 @@ if [ $FOUND_W -eq 0 ]; then
 else
   echo "  * Found Wine in PATH!"
 fi
-echo ""
 
+echo ""
 if [ ! -d $HOME/storage ]; then
   echo "  * Need permission to mount internal storage!"
   termux-setup-storage
@@ -365,7 +384,9 @@ if [ ! -d $HOME/storage ]; then
 else
   echo "  * Permission to mount internal storage granted!"
 fi
-echo ""
 
-echo "  Done! Nothing else left to do."
+stopx
+
+echo ""
+echo "  * Done! Nothing else left to do."
 echo ""
