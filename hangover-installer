@@ -3,7 +3,7 @@
 HOSTER=JoshuaDoes
 REPO="https://github.com/JoshuaDoes/winehangover-image"
 BRANCH=dev
-VER="v1.10.18"
+VER="v1.11.0"
 
 export WINEPREFIX="$HOME/.winehangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -24,9 +24,6 @@ export T="$MNT/t:"
 export Z="$MNT/z:"
 
 export WINEARCH=win64
-
-# Screen wipe
-clear
 
 # Hide outputs when unnecessary
 pushd() {
@@ -85,23 +82,27 @@ startx() {
   echo ""
   echo "  > Starting an X server"
   termux-x11 -retro $DISPLAY >/dev/null 2>&1 &
-  export TXPID=$!
-  #am start --user 0 -n com.termux.x11/.MainActivity >/dev/null 2>&1
+  disown
   sleep 1
 }
-stopx() {
-  echo ""
-  echo "  > Stopping the X server"
-  #am broadcast -a com.termux.x11.ACTION_STOP -p com.termux.x11 >/dev/null 2>&1
-  pkill -x com.termux.x11 >/dev/null 2>&1
-  kill $(jobs -p) >/dev/null 2>&1
-  kill $TXPID >/dev/null 2>&1
-  sleep 1
+killconfirmed() {
+  kill -9 $(jobs -p) 2>/dev/null
+  pkill -9 -f "C:" 2>/dev/null
+  pkill -9 -f "T:" 2>/dev/null
+  pkill -9 -f "Z:" 2>/dev/null
+  pkill -9 -f ".exe" 2>/dev/null
+  pkill -9 -f "pulseaudio" 2>/dev/null
+  pkill -9 -f "dbus-daemon" 2>/dev/null
+  pkill -9 -f "dbus-launch" 2>/dev/null
+  pkill -9 -f "com.termux.x11" 2>/dev/null
+}
+stopwine() {
   echo "  > Shutting down Wine prefix"
-  wineboot --end-session >/dev/null 2>&1
-  wineboot --kill --force >/dev/null 2>&1
-  wineserver --kill=9 >/dev/null 2>&1
-  wineserver --wait >/dev/null 2>&1
+  wineboot --end-session
+}
+stopall() {
+  stopwine
+  killconfirmed
 }
 info() {
   echo ""
@@ -111,7 +112,7 @@ info() {
   echo "  REPO: $REPO"
 }
 
-stopx
+stopall
 clear
 info
 echo ""
@@ -392,7 +393,7 @@ else
   echo "  * Permission to mount internal storage granted!"
 fi
 
-stopx
+stopall
 
 echo ""
 echo "  * Done! Nothing else left to do."
