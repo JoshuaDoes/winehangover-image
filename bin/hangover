@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 export MAINTAINER=JoshuaDoes
-export VER="v1.11.4"
+export VER="v1.11.5"
 
 export WINEPREFIX="$HOME/.hangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -20,6 +20,12 @@ export MNT="$WINEPREFIX/dosdevices"
 export C="$WINEPREFIX/drive_c"
 export T="$MNT/t:"
 export Z="$MNT/z:"
+
+export UserProfileDir="$C/users/$USER"
+export UserDesktopDir="$UserProfileDir/Desktop"
+
+export PublicProfileDir="$C/users/Public"
+export PublicDesktopDir="$PublicProfileDir/Desktop"
 
 export WINEARCH=win64
 export WINEDEBUG=-all

@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 export MAINTAINER=JoshuaDoes
-export VER="v1.11.4"
+export VER="v1.11.5"
 
 export WINEPREFIX="$HOME/.hangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -20,6 +20,12 @@ export MNT="$WINEPREFIX/dosdevices"
 export C="$WINEPREFIX/drive_c"
 export T="$MNT/t:"
 export Z="$MNT/z:"
+
+export UserProfileDir="$C/users/$USER"
+export UserDesktopDir="$UserProfileDir/Desktop"
+
+export PublicProfileDir="$C/users/Public"
+export PublicDesktopDir="$PublicProfileDir/Desktop"
 
 export WINEARCH=win64
 export WINEDEBUG=-all
@@ -399,19 +405,6 @@ for dll in ${DXVKDLLS[@]}; do
   cp $CACHE/dxvk/dxvk-$DXVKREL/x64/$dll $C/windows/system32/$dll
 done
 
-mkdir $C/bin
-
-echo "  > Installing vulkaninfo (x64)"
-cp $CACHE/bin/windows/vulkaninfo-x64.exe $C/bin/
-echo "  > Installing Coreinfo (x64)"
-cp $CACHE/bin/windows/Coreinfo64.exe $C/bin/
-echo "  > Installing Explorer++ (x64)"
-cp $CACHE/bin/windows/Explorer++.exe $C/bin/
-
-echo "  > Installing 7-Zip (arm64)"
-wine $CACHE/bin/windows/7z-latest-arm64.exe /S /D="C:\Program Files\7-Zip"
-echo "  > Installing VLC Media Player (arm64)"
-wine $CACHE/bin/windows/vlc-dev-latest-arm64.exe /L=1033 /S /D="C:\Program Files\VideoLAN\VLC"
 echo "  > Installing Wine Gecko (x86)"
 msiexec $CACHE/bin/windows/wine-gecko-latest-x86.msi "C:\Program Files (x86)\Wine\Gecko"
 echo "  > Installing Wine Gecko (x64)"
@@ -427,6 +420,23 @@ msiexec $CACHE/bin/windows/wine-mono-latest.msi "C:\Program Files\Wine\Mono"
 #winetricks -q dotnetdesktop6
 #echo "  > Installing Microsoft Paint (x86)"
 #winetricks arch=64 apps mspaint
+
+mkdir $C/bin
+
+echo "  > Installing vulkaninfo (x64)"
+cp $CACHE/bin/windows/vulkaninfo-x64.exe $C/bin/
+echo "  > Installing Coreinfo (x64)"
+cp $CACHE/bin/windows/Coreinfo64.exe $C/bin/
+echo "  > Installing Explorer++ (x64)"
+cp $CACHE/bin/windows/Explorer++.exe $C/bin/
+
+echo "  > Installing 7-Zip (arm64)"
+wine $CACHE/bin/windows/7z-latest-arm64.exe /S /D="C:\Program Files\7-Zip"
+
+echo "  > Installing VLC Media Player (arm64)"
+wine $CACHE/bin/windows/vlc-dev-latest-arm64.exe /L=1033 /S /D="C:\Program Files\VideoLAN\VLC"
+rm "$PublicDesktopDir/VLC media player.lnk"
+rm "$UserDesktopDir/VLC media player.desktop"
 
 echo "  > Mounting T: to $HOME"
 rm "$T"
