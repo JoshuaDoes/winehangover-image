@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 export MAINTAINER=JoshuaDoes
-export VER="v1.11.2"
+export VER="v1.11.3"
 
 export WINEPREFIX="$HOME/.hangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -95,6 +95,24 @@ openbox-session() {
 }
 xfce4-session() {
   command xfce4-session >/dev/null 2>&1
+}
+
+kill() {
+  command kill "$@" 2>/dev/null
+}
+killname() {
+  for proc in "${@}"; do
+    kill -9 $(ps aux | grep -i "$proc" | awk '{print $2}' | tr '\n' ' ')
+  done
+}
+killjobs() {
+  kill -9 $(jobs -p)
+}
+killconfirmed() {
+  killjobs
+  killname "C:" "T:" "Z:" "\.exe"
+  killname "pulseaudio" "com.termux.x11"
+  killname "dbus-daemon" "dbus-launch"
 }
 
 info() {
@@ -203,17 +221,6 @@ startx() {
   echo ""
   stopwine
   stopx
-}
-killconfirmed() {
-  kill -9 $(jobs -p) 2>/dev/null
-  pkill -9 -f "C:" 2>/dev/null
-  pkill -9 -f "T:" 2>/dev/null
-  pkill -9 -f "Z:" 2>/dev/null
-  pkill -9 -f ".exe" 2>/dev/null
-  pkill -9 -f "pulseaudio" 2>/dev/null
-  pkill -9 -f "dbus-daemon" 2>/dev/null
-  pkill -9 -f "dbus-launch" 2>/dev/null
-  pkill -9 -f "com.termux.x11" 2>/dev/null
 }
 stopwine() {
   echo "  > Shutting down Wine prefix"

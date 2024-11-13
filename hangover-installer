@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 export MAINTAINER=JoshuaDoes
-export VER="v1.11.2"
+export VER="v1.11.3"
 
 export WINEPREFIX="$HOME/.hangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -80,6 +80,13 @@ wineserver() {
   LD_LIBRARY_PATH="$WINEPREFIX/test" \
     command $WINEBIN/wineserver "$@" >/dev/null 2>&1
 }
+winetricks() {
+  LD_LIBRARY_PATH="$WINEPREFIX/test" \
+    command $WINEBIN/winetricks "$@" #>/dev/null 2>&1
+}
+msiexec() {
+  wine msiexec /i "$1" /quiet /qn /norestart
+}
 winedesktop() {
   wine explorer /desktop=shell,-1x-1 "$cmd" "${args[@]}" >/dev/null 2>&1
 }
@@ -89,12 +96,23 @@ openbox-session() {
 xfce4-session() {
   command xfce4-session >/dev/null 2>&1
 }
-winetricks() {
-  LD_LIBRARY_PATH="$WINEPREFIX/test" \
-    command $WINEBIN/winetricks "$@" #>/dev/null 2>&1
+
+kill() {
+  command kill "$@" 2>/dev/null
 }
-msiexec() {
-  wine msiexec /i "$1" /quiet /qn /norestart
+killname() {
+  for proc in "${@}"; do
+    kill -9 $(ps aux | grep -i "$proc" | awk '{print $2}' | tr '\n' ' ')
+  done
+}
+killjobs() {
+  kill -9 $(jobs -p)
+}
+killconfirmed() {
+  killjobs
+  killname "C:" "T:" "Z:" "\.exe"
+  killname "pulseaudio" "com.termux.x11"
+  killname "dbus-daemon" "dbus-launch"
 }
 
 info() {
@@ -135,17 +153,6 @@ startx() {
   termux-x11 -retro $DISPLAY >/dev/null 2>&1 &
   disown
   sleep 1
-}
-killconfirmed() {
-  kill -9 $(jobs -p) 2>/dev/null
-  pkill -9 -f "C:" 2>/dev/null
-  pkill -9 -f "T:" 2>/dev/null
-  pkill -9 -f "Z:" 2>/dev/null
-  pkill -9 -f ".exe" 2>/dev/null
-  pkill -9 -f "pulseaudio" 2>/dev/null
-  pkill -9 -f "dbus-daemon" 2>/dev/null
-  pkill -9 -f "dbus-launch" 2>/dev/null
-  pkill -9 -f "com.termux.x11" 2>/dev/null
 }
 stopwine() {
   echo "  > Shutting down Wine prefix"
