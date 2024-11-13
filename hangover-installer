@@ -171,22 +171,22 @@ info
 echo ""
 
 PS3='  Which download mirror should we use? (1-2) '
-menuvar=("JoshuaDoes: CloudFlare" "JoshuaDoes: GitHub" "Exit")
+menuvar=("joshuado.es/git/hangover" "GitHub/JoshuaDoes/winehangover-image" "Exit")
 select menuvar in "${menuvar[@]}"
 do
   case $menuvar in
-    "JoshuaDoes: CloudFlare")
+    "joshuado.es/git/hangover")
       export DL=git
       export HOSTER=JoshuaDoes
       export PROVIDER=CloudFlare
       export REPO="https://joshuado.es/git/hangover"
       export BRANCH=dev
       break;;
-    "JoshuaDoes: GitHub")
+    "GitHub/JoshuaDoes/winehangover-image")
       export DL=git
       export HOSTER=JoshuaDoes
       export PROVIDER=GitHub
-      export REPO="https://github.com/JoshuaDoes/winehangover-image"
+      export REPO="git@github.com:JoshuaDoes/winehangover-image"
       export BRANCH=dev
       break;;
     "Exit")
