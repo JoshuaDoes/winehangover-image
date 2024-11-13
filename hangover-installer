@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 export MAINTAINER=JoshuaDoes
-export VER="v1.11.1"
+export VER="v1.11.2"
 
 export WINEPREFIX="$HOME/.hangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -105,15 +105,15 @@ info() {
   echo "  Maintainer: $MAINTAINER"
   case $DL in
     git)
-      echo "  Hoster:   $HOSTER"
-      echo "  Provider: $PROVIDER"
-      echo "  Repo:     $REPO"
-      echo "  Branch:   $BRANCH"
+      echo "  Hoster:     $HOSTER"
+      echo "  Provider:   $PROVIDER"
+      echo "  Repo:       $REPO"
+      echo "  Branch:     $BRANCH"
       ;;
     direct)
-      echo "  Hoster:   $HOSTER"
-      echo "  Provider: $PROVIDER"
-      echo "  Source:   $REPO"
+      echo "  Hoster:     $HOSTER"
+      echo "  Provider:   $PROVIDER"
+      echo "  Source:     $REPO"
       ;;
   esac
 
