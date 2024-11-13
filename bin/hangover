@@ -1,11 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
-HOSTER=JoshuaDoes
-REPO="https://github.com/JoshuaDoes/winehangover-image"
-BRANCH=dev
-VER="v1.11.0"
+export MAINTAINER=JoshuaDoes
+export VER="v1.11.1"
 
-export WINEPREFIX="$HOME/.winehangover"
+export WINEPREFIX="$HOME/.hangover"
 export CACHE="$WINEPREFIX/.cache"
 export WINEPATH="$WINEPREFIX/wine"
 export WINEBIN="$WINEPATH/arm64-v8a/bin"
@@ -46,6 +44,34 @@ wait() {
 disown() {
   command disown "$@" >/dev/null 2>&1
 }
+mkdir() {
+  command mkdir -p "$@" >/dev/null 2>&1
+}
+rm() {
+  command rm "$@" >/dev/null 2>&1
+}
+mv() {
+  command mv "$@" >/dev/null 2>&1
+}
+unzip() {
+  command unzip -o "$@" >/dev/null 2>&1
+}
+pkg() {
+  command pkg "$@" >/dev/null 2>&1
+}
+dpkg() {
+  command dpkg "$@" >/dev/null 2>&1
+}
+wget() {
+  command wget "$1" --timestamping --quiet --show-progress
+}
+wget2() {
+  command wget "$1" -O "$2" --timestamping --quiet --show-progress
+}
+wine() {
+  LD_LIBRARY_PATH="$TESTPATH" \
+    command wine "$@"
+}
 wineboot() {
   LD_LIBRARY_PATH="$TESTPATH" \
     command wineboot "$@" >/dev/null 2>&1
@@ -53,6 +79,13 @@ wineboot() {
 wineserver() {
   LD_LIBRARY_PATH="$TESTPATH" \
     command wineserver "$@" >/dev/null 2>&1
+}
+winetricks() {
+  LD_LIBRARY_PATH="$WINEPREFIX/test" \
+    command $WINEBIN/winetricks "$@" #>/dev/null 2>&1
+}
+msiexec() {
+  wine msiexec /i "$1" /quiet /qn /norestart
 }
 winedesktop() {
   wine explorer /desktop=shell,-1x-1 "$cmd" "${args[@]}" >/dev/null 2>&1
@@ -66,15 +99,20 @@ xfce4-session() {
 
 info() {
   echo "  Termux/Hangover Launcher"
-  echo "    Hosted by $HOSTER"
-  echo "    > $VER"
-  echo "  REPO: $REPO"
+  echo "  > $VER"
+  echo ""
+  echo "  Maintainer: $MAINTAINER"
   echo ""
   echo "Most recent changelog message:"
   pushd $CACHE
-  echo "  $(git log -1 --pretty=format:%B | cat)"
+  if [ -d .git ]; then
+    echo "  $(git log -1 --pretty=format:%B | cat)"
+  elif [ -f LASTCOMMITMSG ]; then
+    echo "  $(cat LASTCOMMITMSG)"
+  fi
   popd
 }
+
 startx() {
   LD_PRELOAD_OLD=$LD_PRELOAD
   if [ $(getprop ro.config.knox) ]; then
@@ -190,6 +228,8 @@ stopall() {
   stopx
   killconfirmed
 }
+
+### main ###
 
 clear
 echo ""
