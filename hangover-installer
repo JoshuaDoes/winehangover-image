@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 export MAINTAINER=JoshuaDoes
-export VER="v1.11.3"
+export VER="v1.11.4"
 
 export WINEPREFIX="$HOME/.hangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -300,6 +300,7 @@ case $DL in
     pushd $CACHE
     echo "    $(git log -1 --pretty=format:%B | cat)"
     popd
+    echo ""
     ;;
   direct)
     echo "  * Direct not yet implemented!"
