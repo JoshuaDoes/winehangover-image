@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 export MAINTAINER=JoshuaDoes
-export VER="v1.11.5"
+export VER="v1.11.7"
 
 export WINEPREFIX="$HOME/.hangover"
 export CACHE="$WINEPREFIX/.cache"
@@ -166,10 +166,21 @@ startx() {
   wine regedit /s $WINEPREFIX/hangover.reg
 
   if [ ! -z $HANGOVERDBG ] && [ "$wrapper" = "wine" ] && [ "$cmd" = "cmd" ]; then
-    echo "  > Booting the command prompt"
+    echo "  > Booting a command prompt"
     echo ""
     pushd $C
     wine cmd <&0 &
+    popd
+    export CMDPID=$!
+    wrapper=""
+    cmd=""
+    args=""
+    sleep 1
+  elif [ ! -z $HANGOVERDBG ] && [ "$wrapper" = "wine" ] && [ "$cmd" = "bash" ]; then
+    echo "  > Booting a Bash shell"
+    echo ""
+    pushd $C
+    bash <&0 &
     popd
     export CMDPID=$!
     wrapper=""
@@ -283,8 +294,8 @@ if [ -z "$DE" ]; then
 fi
 
 if [ -z "$cmd" ]; then
-  PS3='  What should we launch on startup? (1-7) '
-  menuvar=("Nothing" "Wine Explorer" "Explorer++" "7-Zip" "VLC Media Player" "winecfg" "cmd" "Exit")
+  PS3='  What should we launch on startup? (1-8) '
+  menuvar=("Nothing" "Wine Explorer" "Explorer++" "7-Zip" "VLC Media Player" "winecfg" "cmd" "bash" "Exit")
   select menuvar in "${menuvar[@]}"
   do
     case $menuvar in
@@ -314,6 +325,10 @@ if [ -z "$cmd" ]; then
       "cmd")
         export wrapper="wine"
         export cmd="cmd"
+        break;;
+      "bash")
+        export wrapper="wine"
+        export cmd="bash"
         break;;
       "Exit")
         echo ""
