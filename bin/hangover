@@ -1,9 +1,10 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 export MAINTAINER=JoshuaDoes
-export VER="v1.11.7"
+export VER="v1.12.0"
 
-export WINEPREFIX="$HOME/.hangover"
+export WINEPART=".hangover"
+export WINEPREFIX="$HOME/$WINEPART"
 export CACHE="$WINEPREFIX/.cache"
 export WINEPATH="$WINEPREFIX/wine"
 export WINEBIN="$WINEPATH/arm64-v8a/bin"
@@ -29,13 +30,33 @@ export PublicDesktopDir="$PublicProfileDir/Desktop"
 
 export WINEARCH=win64
 export WINEDEBUG=-all
-
-export WINEDLLOVERRIDES="d3d8,d3d9,d3d10core,d3d11,dxgi=n,b"
-if [ ! -f $C/windows/system32/d3d8.dll ]; then
-  WINEDLLOVERRIDES="d3d9,d3d10,d3d10_1,d3d10core,d3d11,dxgi=n,b"
-fi
-
+export WINEESYNC=1
+export WINEESYNC_TERMUX=1
 export DXVK_HUD=version,fps,api,gpuload,devinfo,compiler,scale=0.65
+
+declare -a DXVK
+if [ -f $C/windows/system32/d3d8.dll ]; then
+  DXVK += ("d3d8")
+fi
+if [ -f $C/windows/system32/d3d9.dll ]; then
+  DXVK += ("d3d9")
+fi
+if [ -f $C/windows/system32/d3d10.dll ]; then
+  DXVK += ("d3d10")
+fi
+if [ -f $C/windows/system32/d3d10_1.dll ]; then
+  DXVK += ("d3d10_1")
+fi
+if [ -f $C/windows/system32/d3d10core.dll ]; then
+  DXVK += ("d3d10core")
+fi
+if [ -f $C/windows/system32/d3d11.dll ]; then
+  DXVK += ("d3d11")
+fi
+if [ -f $C/windows/system32/dxgi.dll ]; then
+  DXVK += ("dxgi")
+fi
+export WINEDLLOVERRIDES="$(IFS=,; echo "${DXVK[*]}")=n,b"
 
 # Hide outputs when unnecessary
 pushd() {
@@ -127,12 +148,12 @@ info() {
   echo ""
   echo "  Maintainer: $MAINTAINER"
   echo ""
-  echo "Most recent changelog message:"
+  echo "  Most recent changelog message:"
   pushd $CACHE
   if [ -d .git ]; then
-    echo "  $(git log -1 --pretty=format:%B | cat)"
+    echo "    $(git log -1 --pretty=format:%B | cat)"
   elif [ -f LASTCOMMITMSG ]; then
-    echo "  $(cat LASTCOMMITMSG)"
+    echo "    $(cat LASTCOMMITMSG)"
   fi
   popd
 }

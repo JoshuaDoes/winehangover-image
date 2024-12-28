@@ -1,9 +1,10 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 export MAINTAINER=JoshuaDoes
-export VER="v1.11.7"
+export VER="v1.12.0"
 
-export WINEPREFIX="$HOME/.hangover"
+export WINEPART=".hangover"
+export WINEPREFIX="$HOME/$WINEPART"
 export CACHE="$WINEPREFIX/.cache"
 export WINEPATH="$WINEPREFIX/wine"
 export WINEBIN="$WINEPATH/arm64-v8a/bin"
@@ -29,13 +30,33 @@ export PublicDesktopDir="$PublicProfileDir/Desktop"
 
 export WINEARCH=win64
 export WINEDEBUG=-all
-
-export WINEDLLOVERRIDES="d3d8,d3d9,d3d10core,d3d11,dxgi=n,b"
-if [ ! -f $C/windows/system32/d3d8.dll ]; then
-  WINEDLLOVERRIDES="d3d9,d3d10,d3d10_1,d3d10core,d3d11,dxgi=n,b"
-fi
-
+export WINEESYNC=1
+export WINEESYNC_TERMUX=1
 export DXVK_HUD=version,fps,api,gpuload,devinfo,compiler,scale=0.65
+
+declare -a DXVK
+if [ -f $C/windows/system32/d3d8.dll ]; then
+  DXVK += ("d3d8")
+fi
+if [ -f $C/windows/system32/d3d9.dll ]; then
+  DXVK += ("d3d9")
+fi
+if [ -f $C/windows/system32/d3d10.dll ]; then
+  DXVK += ("d3d10")
+fi
+if [ -f $C/windows/system32/d3d10_1.dll ]; then
+  DXVK += ("d3d10_1")
+fi
+if [ -f $C/windows/system32/d3d10core.dll ]; then
+  DXVK += ("d3d10core")
+fi
+if [ -f $C/windows/system32/d3d11.dll ]; then
+  DXVK += ("d3d11")
+fi
+if [ -f $C/windows/system32/dxgi.dll ]; then
+  DXVK += ("dxgi")
+fi
+export WINEDLLOVERRIDES="$(IFS=,; echo "${DXVK[*]}")=n,b"
 
 # Hide outputs when unnecessary
 pushd() {
@@ -123,7 +144,7 @@ killconfirmed() {
 
 info() {
   echo ""
-  echo "  Termux/Hangover Install & Update"
+  echo "  Termux/Hangover Installer & Updater"
   echo "  > $VER"
   echo ""
   echo "  Maintainer: $MAINTAINER"
@@ -143,12 +164,12 @@ info() {
 
   if [ -d $CACHE ]; then
     echo ""
-    echo "Most recent changelog message:"
+    echo "  Most recent changelog message:"
     pushd $CACHE
     if [ -d .git ]; then
-      echo "  $(git log -1 --pretty=format:%B | cat)"
+      echo "    $(git log -1 --pretty=format:%B | cat)"
     elif [ -f LASTCOMMITMSG ]; then
-      echo "  $(cat LASTCOMMITMSG)"
+      echo "    $(cat LASTCOMMITMSG)"
     fi
     popd
   fi
@@ -176,19 +197,26 @@ clear
 info
 echo ""
 
-PS3='  Which download mirror should we use? (1-2) '
-menuvar=("joshuado.es/git/hangover" "GitHub/JoshuaDoes/winehangover-image" "Exit")
+PS3='  Which download mirror should we use? (1-3) '
+menuvar=("https git.joshuado.es" "https github.com" "ssh github.com" "Exit")
 select menuvar in "${menuvar[@]}"
 do
   case $menuvar in
-    "joshuado.es/git/hangover")
+    "https git.joshuado.es")
       export DL=git
       export HOSTER=JoshuaDoes
-      export PROVIDER=CloudFlare
-      export REPO="https://joshuado.es/git/hangover"
+      export PROVIDER=JoshuaDoes
+      export REPO="https://git.joshuado.es/hangover"
       export BRANCH=dev
       break;;
-    "GitHub/JoshuaDoes/winehangover-image")
+    "https github.com")
+      export DL=git
+      export HOSTER=JoshuaDoes
+      export PROVIDER=GitHub
+      export REPO="https://github.com/JoshuaDoes/winehangover-image"
+      export BRANCH=dev
+      break;;
+    "ssh github.com")
       export DL=git
       export HOSTER=JoshuaDoes
       export PROVIDER=GitHub
@@ -225,19 +253,20 @@ done
 
 echo ""
 PS3='  Which DXVK release should we use? (1-5) '
-menuvar=("Dyneteve" "Hangover" "Airis" "JoshuaDoes" "Doitsujin" "Exit")
+#menuvar=("Hangover" "Dyneteve" "Airis" "JoshuaDoes" "Doitsujin" "Exit")
+menuvar=("Doitsujin" "Exit")
 select menuvar in "${menuvar[@]}"
 do
   case $menuvar in
-    "Dyneteve")
-      export DXVKDLLS=("d3d8.dll" "d3d9.dll" "d3d10core.dll" "d3d11.dll" "dxgi.dll")
-      export DXVKREL=dyneteve
-      export DXVKS=Dyneteve
-      break;;
     "Hangover")
       export DXVKDLLS=("d3d8.dll" "d3d9.dll" "d3d10core.dll" "d3d11.dll" "dxgi.dll")
       export DXVKREL=hangover
       export DXVKS=Hangover
+      break;;
+    "Dyneteve")
+      export DXVKDLLS=("d3d8.dll" "d3d9.dll" "d3d10core.dll" "d3d11.dll" "dxgi.dll")
+      export DXVKREL=dyneteve
+      export DXVKS=Dyneteve
       break;;
     "JoshuaDoes")
       export DXVKDLLS=("d3d8.dll" "d3d9.dll" "d3d10core.dll" "d3d11.dll" "dxgi.dll")
@@ -250,7 +279,7 @@ do
       export DXVKS=Airis
       break;;
     "Doitsujin")
-      export DXVKDLLS=("d3d9.dll" "d3d10.dll" "d3d10_1.dll" "d3d10core.dll" "d3d11.dll" "dxgi.dll")
+      export DXVKDLLS=("d3d8.dll" "d3d9.dll" "d3d10core.dll" "d3d11.dll" "dxgi.dll")
       export DXVKREL=doitsujin
       export DXVKS=Doitsujin
       break;;
@@ -306,7 +335,6 @@ case $DL in
     pushd $CACHE
     echo "    $(git log -1 --pretty=format:%B | cat)"
     popd
-    echo ""
     ;;
   direct)
     echo "  * Direct not yet implemented!"
@@ -342,7 +370,7 @@ case $PLAT in
   *) echo "  > Skipping ICD";;
 esac
 echo "  > Installing Termux:X11"
-termux-open $CACHE/apk/termux11.apk
+termux-open $CACHE/apk/termux-x11.apk
 echo "  ! If this fails, please manually install:"
 echo "    $CACHE/apk/termux11.apk"
 
@@ -355,8 +383,8 @@ rm -rf wine
 cp -R $CACHE/wine .
 echo "  > Installing FEX-Emu"
 cp $CACHE/fex/libarm64ecfex.dll $CACHE/fex/libwow64fex.dll $WINELIBWIN/
-echo "  > Installing box64 w/ Strongmem + safe/fast flags"
-cp $CACHE/box64/box64cpu.dll $WINELIBWIN/
+#echo "  > Installing box64 w/ Strongmem + safe/fast flags"
+#cp $CACHE/box64/box64cpu.dll $WINELIBWIN/
 echo "  > Copying libraries from Termux"
 mkdir test
 pushd test
@@ -372,10 +400,13 @@ echo "  > Installing Hangover scripts"
 mkdir ~/bin
 cp \
   $CACHE/bin/hangover $CACHE/bin/hangover-debug \
-  $CACHE/install-hangover ~/bin/
+  $CACHE/hangover-install ~/bin/
 chmod +x ~/bin/hangover
 chmod +x ~/bin/hangover-debug
-chmod +x ~/bin/install-hangover
+chmod +x ~/bin/hangover-install
+
+# Remove any leftover scripts
+rm ~/bin/install-hangover
 
 if [ -d $C ]; then
   echo "  > Updating the Wine prefix"
@@ -388,7 +419,7 @@ fi
 echo "  > Applying Windows 11 profile to prefix"
 wine winecfg -v win11
 
-echo "  > Installing registry"
+echo "  > Installing Hangover registry patches"
 cp $CACHE/reg/hangover.reg $WINEPREFIX/
 
 echo "  > Installing Microsoft core fonts"
@@ -396,11 +427,11 @@ pushd $C/windows/Fonts
 unzip $CACHE/fonts/mscorefonts.zip
 popd
 
-echo "  > Installing DXVK x32 from $DXVKS"
+echo "  > Installing DXVK x32 (from $DXVKS)"
 for dll in ${DXVKDLLS[@]}; do
   cp $CACHE/dxvk/dxvk-$DXVKREL/x32/$dll $C/windows/syswow64/$dll
 done
-echo "  > Installing DXVK x64 from $DXVKS"
+echo "  > Installing DXVK x64 (from $DXVKS)"
 for dll in ${DXVKDLLS[@]}; do
   cp $CACHE/dxvk/dxvk-$DXVKREL/x64/$dll $C/windows/system32/$dll
 done
@@ -409,8 +440,17 @@ echo "  > Installing Wine Gecko (x86)"
 msiexec $CACHE/bin/windows/wine-gecko-latest-x86.msi "C:\Program Files (x86)\Wine\Gecko"
 echo "  > Installing Wine Gecko (x64)"
 msiexec $CACHE/bin/windows/wine-gecko-latest-x86_64.msi "C:\Program Files\Wine\Gecko"
+
 echo "  > Installing Wine Mono"
 msiexec $CACHE/bin/windows/wine-mono-latest.msi "C:\Program Files\Wine\Mono"
+
+echo "  > Installing 7-Zip (arm64)"
+wine $CACHE/bin/windows/7z-latest-arm64.exe /S /D="C:\Program Files\7-Zip"
+
+echo "  > Installing VLC Media Player (arm64)"
+wine $CACHE/bin/windows/vlc-dev-latest-arm64.exe /L=1033 /S /D="C:\Program Files\VideoLAN\VLC"
+rm "$PublicDesktopDir/VLC media player.lnk"
+rm "$UserDesktopDir/VLC media player.desktop"
 
 #echo "  > Installing winetricks"
 #cp $CACHE/bin/winetricks $WINEBIN/
@@ -430,14 +470,6 @@ cp $CACHE/bin/windows/Coreinfo64.exe $C/bin/
 echo "  > Installing Explorer++ (x64)"
 cp $CACHE/bin/windows/Explorer++.exe $C/bin/
 
-echo "  > Installing 7-Zip (arm64)"
-wine $CACHE/bin/windows/7z-latest-arm64.exe /S /D="C:\Program Files\7-Zip"
-
-echo "  > Installing VLC Media Player (arm64)"
-wine $CACHE/bin/windows/vlc-dev-latest-arm64.exe /L=1033 /S /D="C:\Program Files\VideoLAN\VLC"
-rm "$PublicDesktopDir/VLC media player.lnk"
-rm "$UserDesktopDir/VLC media player.desktop"
-
 echo "  > Mounting T: to $HOME"
 rm "$T"
 ln -s "$HOME" "$T"
@@ -448,18 +480,18 @@ ln -s "$EXTERNAL_STORAGE" "$Z"
 echo ""
 echo "  Install complete!"
 echo ""
-echo "  Cached for reinstalls at:"
+echo "  Cache location for updates and reinstalls:"
 echo "    $CACHE"
 
 echo ""
 echo "  Launch Hangover like so:"
 echo "    hangover"
-echo "  If you need to read the debug log or pipe it to a file:"
+echo "  If you need to read the debug log, use a debug shell or pipe it to a file:"
 echo "    hangover-debug"
-echo "  To update:"
-echo "    install-hangover"
+echo "  To update (or reinstall if you delete all but .cache):"
+echo "    hangover-install"
 echo "  To reinstall:"
-echo "    rm -rf \$HOME/.winehangover && install-hangover"
+echo "    rm -rf ~/$WINEPART && hangover-install"
 echo ""
 echo "  If you haven't disabled the phantom process killer,"
 echo "  do so now with either root or ADB (Shizuku supported)."
