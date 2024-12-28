@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 export MAINTAINER=JoshuaDoes
-export VER="v1.12.0"
+export VER="v1.12.1"
 
 export WINEPART=".hangover"
 export WINEPREFIX="$HOME/$WINEPART"
@@ -36,25 +36,25 @@ export DXVK_HUD=version,fps,api,gpuload,devinfo,compiler,scale=0.65
 
 declare -a DXVK
 if [ -f $C/windows/system32/d3d8.dll ]; then
-  DXVK += ("d3d8")
+  DXVK+=("d3d8")
 fi
 if [ -f $C/windows/system32/d3d9.dll ]; then
-  DXVK += ("d3d9")
+  DXVK+=("d3d9")
 fi
 if [ -f $C/windows/system32/d3d10.dll ]; then
-  DXVK += ("d3d10")
+  DXVK+=("d3d10")
 fi
 if [ -f $C/windows/system32/d3d10_1.dll ]; then
-  DXVK += ("d3d10_1")
+  DXVK+=("d3d10_1")
 fi
 if [ -f $C/windows/system32/d3d10core.dll ]; then
-  DXVK += ("d3d10core")
+  DXVK+=("d3d10core")
 fi
 if [ -f $C/windows/system32/d3d11.dll ]; then
-  DXVK += ("d3d11")
+  DXVK+=("d3d11")
 fi
 if [ -f $C/windows/system32/dxgi.dll ]; then
-  DXVK += ("dxgi")
+  DXVK+=("dxgi")
 fi
 export WINEDLLOVERRIDES="$(IFS=,; echo "${DXVK[*]}")=n,b"
 
