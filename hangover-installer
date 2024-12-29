@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 export MAINTAINER=JoshuaDoes
-export VER="v1.12.2"
+export VER="v1.12.3"
 
 export WINEPART=".hangover"
 export WINEPREFIX="$HOME/$WINEPART"
@@ -360,6 +360,7 @@ pkg install -y termux-x11-nightly pulseaudio \
   freeglut glu fontconfig freetype \
   libxrandr libxcomposite libx11 libxrender libxshmfence \
   libdrm libwayland libandroid-shmem \
+  libandroid-spawn \
   xz-utils cabextract libgnutls \
   openbox #xfce4
 case $PLAT in

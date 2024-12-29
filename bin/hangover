@@ -1,7 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 export MAINTAINER=JoshuaDoes
-export VER="v1.12.2"
+export VER="v1.12.3"
 
 export WINEPART=".hangover"
 export WINEPREFIX="$HOME/$WINEPART"
