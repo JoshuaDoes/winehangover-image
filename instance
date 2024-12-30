@@ -204,13 +204,15 @@ info() {
   esac
 
   if [ -d $CACHE ]; then
-    echo ""
-    echo "  Most recent changelog message:"
     pushd $CACHE
     if [ -d .git ]; then
+      echo ""
+      echo "  Most recent git log:"
       echo "    $(git log -1 --pretty=format:%B | cat)"
-    elif [ -f LASTCOMMITMSG ]; then
-      echo "    $(cat LASTCOMMITMSG)"
+    elif [ -f LASTCHANGE ]; then
+      echo ""
+      echo "  Most recent change message:"
+      echo "    $(cat LASTCHANGE)"
     fi
     popd
   fi
@@ -249,7 +251,6 @@ elif [ $NUKE -eq 1 ]; then
   rm ~/bin/hangover
   rm ~/bin/install-hangover
 
-  echo ""
   echo "  * Nuke complete!"
   echo ""
   exit 0
@@ -399,7 +400,7 @@ case $DL in
     fi
 
     echo ""
-    echo "  Most recent changelog message:"
+    echo "  Most recent git log:"
     pushd $CACHE
     echo "    $(git log -1 --pretty=format:%B | cat)"
     popd
@@ -551,38 +552,6 @@ rm "$Z"
 ln -s "$EXTERNAL_STORAGE" "$Z"
 
 echo ""
-if [ $UPDATE -eq 1 ]; then
-  echo "  Update complete!"
-elif [ $INSTALL -eq 1 ]; then
-  echo "  Install complete!"
-fi
-echo ""
-echo "  Cache location:"
-echo "    $CACHE"
-
-echo ""
-echo "  Launch Hangover like so:"
-echo "    hangover"
-echo ""
-echo "  If you need to read the debug log, use a debug shell or pipe it to a file:"
-echo "    hangover-debug"
-echo ""
-echo "  To update:"
-echo "    hangover-install"
-echo ""
-echo "  To reinstall:"
-echo "    rm -rf ~/$WINEPART && hangover-install"
-echo ""
-echo "  If you haven't disabled the phantom process killer,"
-echo "  do so now with either root or ADB (Shizuku supported)."
-echo ""
-echo "  First, disable the phantom process monitor:"
-echo "    settings put global settings_enable_monitor_phantom_procs false"
-echo ""
-echo "  Finally, raise the limit to infinity just to be safe:"
-echo "    device_config put activity_manager max_phantom_processes 2147483647"
-
-echo ""
 FOUND_HO=1
 command -v hangover >/dev/null 2>&1 || {
   FOUND_HO=0
@@ -632,6 +601,32 @@ else
 fi
 
 stopall
+
+echo ""
+if [ $UPDATE -eq 1 ]; then
+  echo "  Update complete!"
+elif [ $INSTALL -eq 1 ]; then
+  echo "  Install complete!"
+fi
+if [ $CLEAN -eq 1 ]; then
+  echo "  * As requested, we reset your install!"
+fi
+echo ""
+echo "  Cache location:"
+echo "    $CACHE"
+
+echo ""
+echo "  Launch the Hangover manager like so:"
+echo "    hangover"
+echo ""
+echo "  If you haven't disabled the phantom process killer,"
+echo "  do so now with either root or ADB (Shizuku supported)."
+echo ""
+echo "  First, disable the phantom process monitor:"
+echo "    settings put global settings_enable_monitor_phantom_procs false"
+echo ""
+echo "  Finally, raise the limit to infinity just to be safe:"
+echo "    device_config put activity_manager max_phantom_processes 2147483647"
 
 echo ""
 echo "  * Done! Nothing else left to do."

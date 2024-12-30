@@ -1,5 +1,10 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
+HOST="https://raw.githubusercontent.com/JoshuaDoes/winehangover-image/refs/heads/dev"
+INST="$TMPDIR"
+SCRIPT="instance"
+CMD=""
+
 export MAINTAINER=JoshuaDoes
 export VER="v1.13.0"
 export DL=git
@@ -11,11 +16,142 @@ export BRANCH=dev
 export WINEPART=".hangover"
 export WINEPREFIX="$HOME/$WINEPART"
 export CACHE="$WINEPREFIX/.cache"
+export WINEPATH="$WINEPREFIX/wine"
+export WINEBIN="$WINEPATH/arm64-v8a/bin"
+export WINELIB="$WINEPATH/arm64-v8a/lib/wine"
+export WINELIBWIN="$WINELIB/aarch64-windows"
+export TESTPATH="$WINEPREFIX/test"
+export PATH="$WINEBIN:$PATH"
 
-HOST="https://raw.githubusercontent.com/JoshuaDoes/winehangover-image/refs/heads/dev"
-INST="$TMPDIR"
-SCRIPT="instance"
-CMD=""
+export VK_ICD_FILENAMES=$PREFIX/share/vulkan/icd.d/wrapper_icd.aarch64.json
+export MESA_VK_WSI_PRESENT_MODE=mailbox
+export DISPLAY=:0
+
+export MNT="$WINEPREFIX/dosdevices"
+export C="$WINEPREFIX/drive_c"
+export T="$MNT/t:"
+export Z="$MNT/z:"
+
+export UserProfileDir="$C/users/$USER"
+export UserDesktopDir="$UserProfileDir/Desktop"
+
+export PublicProfileDir="$C/users/Public"
+export PublicDesktopDir="$PublicProfileDir/Desktop"
+
+export WINEARCH=win64
+export WINEDEBUG=-all
+export WINEESYNC=1
+export WINEESYNC_TERMUX=1
+export DXVK_HUD=version,fps,api,gpuload,devinfo,compiler,scale=0.65
+
+declare -a DXVK
+if [ -f $C/windows/system32/d3d8.dll ]; then
+  DXVK+=("d3d8")
+fi
+if [ -f $C/windows/system32/d3d9.dll ]; then
+  DXVK+=("d3d9")
+fi
+if [ -f $C/windows/system32/d3d10.dll ]; then
+  DXVK+=("d3d10")
+fi
+if [ -f $C/windows/system32/d3d10_1.dll ]; then
+  DXVK+=("d3d10_1")
+fi
+if [ -f $C/windows/system32/d3d10core.dll ]; then
+  DXVK+=("d3d10core")
+fi
+if [ -f $C/windows/system32/d3d11.dll ]; then
+  DXVK+=("d3d11")
+fi
+if [ -f $C/windows/system32/dxgi.dll ]; then
+  DXVK+=("dxgi")
+fi
+export WINEDLLOVERRIDES="$(IFS=,; echo "${DXVK[*]}")=n,b"
+
+# Hide outputs when unnecessary
+pushd() {
+  command pushd "$@" >/dev/null
+}
+popd() {
+  command popd "$@" >/dev/null
+}
+wait() {
+  command wait "$@" >/dev/null 2>&1
+}
+disown() {
+  command disown "$@" >/dev/null 2>&1
+}
+mkdir() {
+  command mkdir -p "$@" >/dev/null 2>&1
+}
+rm() {
+  command rm "$@" >/dev/null 2>&1
+}
+mv() {
+  command mv "$@" >/dev/null 2>&1
+}
+unzip() {
+  command unzip -o "$@" >/dev/null 2>&1
+}
+pkg() {
+  command pkg "$@" >/dev/null 2>&1
+}
+dpkg() {
+  command dpkg "$@" >/dev/null 2>&1
+}
+wget() {
+  command wget "$1" --timestamping --quiet --show-progress
+}
+wget2() {
+  command wget "$1" -O "$2" --timestamping --quiet --show-progress
+}
+wine() {
+  LD_LIBRARY_PATH="$WINEPREFIX/test" \
+    command $WINEBIN/wine "$@" >/dev/null 2>&1
+}
+wineboot() {
+  LD_LIBRARY_PATH="$WINEPREFIX/test" \
+    command $WINEBIN/wineboot "$@" >/dev/null 2>&1
+}
+wineserver() {
+  LD_LIBRARY_PATH="$WINEPREFIX/test" \
+    command $WINEBIN/wineserver "$@" >/dev/null 2>&1
+}
+winetricks() {
+  LD_LIBRARY_PATH="$WINEPREFIX/test" \
+    command $WINEBIN/winetricks "$@" #>/dev/null 2>&1
+}
+msiexec() {
+  wine msiexec /i "$1" /quiet /qn /norestart
+}
+winedesktop() {
+  wine explorer /desktop=shell,-1x-1 "$cmd" "${args[@]}" >/dev/null 2>&1
+}
+openbox-session() {
+  command openbox-session >/dev/null 2>&1
+}
+xfce4-session() {
+  command xfce4-session >/dev/null 2>&1
+}
+
+kill() {
+  command kill "$@" 2>/dev/null
+}
+killname() {
+  for proc in "${@}"; do
+    kill -9 $(ps aux | grep -i "$proc" | awk '{print $2}' | tr '\n' ' ')
+  done
+}
+killjobs() {
+  kill -9 $(jobs -p)
+}
+killconfirmed() {
+  killjobs
+  killname "wineserver"
+  killname "C:" "T:" "Z:" "\.exe"
+  killname "dbus-daemon" "dbus-launch"
+  killname "pulseaudio" "com.termux.x11"
+}
 
 info() {
   echo ""
@@ -36,13 +172,15 @@ info() {
   esac
 
   if [ -d $CACHE ]; then
-    echo ""
-    echo "  Most recent changelog message:"
     pushd $CACHE
     if [ -d .git ]; then
+      echo ""
+      echo "  Most recent git log:"
       echo "    $(git log -1 --pretty=format:%B | cat)"
-    elif [ -f LASTCOMMITMSG ]; then
-      echo "    $(cat LASTCOMMITMSG)"
+    elif [ -f LASTCHANGE ]; then
+      echo ""
+      echo "  Most recent change message:"
+      echo "    $(cat LASTCHANGE)"
     fi
     popd
   fi
@@ -52,7 +190,7 @@ clear
 info
 echo ""
 
-PS3='  What do you want to do? (1-4) '
+PS3='  What do you want to do? (1-6) '
 menuvar=("Launch" "Debug" "Update" "Fresh Update" "Reinstall" "Uninstall" "Exit")
 if [ ! -d "$WINEPREFIX" ]; then
   PS3='  What do you want to do? (1) '
@@ -93,8 +231,8 @@ done
 
 echo ""
 pkg install -y wget
-mkdir -p "$INST"
-wget -O "$INST/$SCRIPT" "$HOST/$SCRIPT"
+mkdir "$INST"
+wget2 "$HOST/$SCRIPT" "$INST/$SCRIPT"
 chmod +x "$INST/$SCRIPT"
 
 echo ""
