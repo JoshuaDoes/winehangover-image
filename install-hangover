@@ -1,0 +1,14 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+## Legacy script to support migrations to >1.13.0 manager.
+
+HOST="https://raw.githubusercontent.com/JoshuaDoes/winehangover-image/refs/heads/dev"
+INST="$TMPDIR"
+SCRIPT="hangover"
+
+pkg install -y wget
+mkdir -p "$INST"
+wget -O "$INST/$SCRIPT" "$HOST/$SCRIPT"
+chmod +x "$INST/$SCRIPT"
+bash "$INST/$SCRIPT"
+rm "$INST/$SCRIPT"
