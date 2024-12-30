@@ -469,6 +469,7 @@ chmod +x ~/bin/hangover
 # Remove any leftover scripts
 rm ~/bin/install-hangover
 rm ~/bin/hangover-debug
+rm ~/bin/hangover-install
 
 if [ -d $C ]; then
   echo "  > Updating the Wine prefix"
