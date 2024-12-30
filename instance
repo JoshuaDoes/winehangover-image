@@ -240,7 +240,7 @@ clear
 info
 echo ""
 
-if [ $CLEAN -eq 1 ] && [ -d $CACHE ]; then
+if [ $CLEAN -eq 1 ]; then
   mv "$CACHE" "$TMPDIR/.hangover-cache"
   rm -rf "$WINEPREFIX"
   mkdir "$WINEPREFIX"
