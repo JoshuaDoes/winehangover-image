@@ -264,6 +264,7 @@ if [ $UPDATE -eq 1 ]; then
   fi
 fi
 
+if [ $UPDATE -eq 1 ]; then
 PS3='  Which download mirror should we use? (1-3) '
 menuvar=("https git.joshuado.es" "https github.com" "ssh github.com" "Exit")
 select menuvar in "${menuvar[@]}"
@@ -296,8 +297,9 @@ do
     *) echo "Invalid option.";;
   esac
 done
-
 echo ""
+fi
+
 PS3='  Which Vulkan ICD should we use? (1-2) '
 menuvar=("Hangover" "I'll handle my Vulkan" "Exit")
 select menuvar in "${menuvar[@]}"
