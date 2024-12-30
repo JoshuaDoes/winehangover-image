@@ -207,17 +207,17 @@ do
       hangover-dbg
       exit 0
       break;;
-    "Update")
-      CMD="update"
-      break;;
-    "Fresh Update")
-      CMD="cleanupdate"
-      break;;
     "Install")
       CMD="install"
       break;;
+    "Update")
+      CMD="update"
+      break;;
     "Reinstall")
       CMD="cleaninstall"
+      break;;
+    "Fresh Update")
+      CMD="cleanupdate"
       break;;
     "Uninstall")
       CMD="nuke"

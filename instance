@@ -12,7 +12,7 @@ case "$1" in
   "update")
     UPDATE=1
     ;;
-  "clean")
+  "cleaninstall")
     INSTALL=1
     CLEAN=1
     ;;
@@ -24,7 +24,7 @@ case "$1" in
     NUKE=1
     ;;
   *)
-    echo "Usage: $0 {update|install|clean|cleanupdate|nuke}"
+    echo "Usage: $0 {install|update|cleaninstall|cleanupdate|nuke}"
     exit 1
     ;;
 esac
