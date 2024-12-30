@@ -326,11 +326,12 @@ case $DL in
       pushd $CACHE
       git remote set-url origin "$REPO"
       git fetch --all
-      git pull
       git checkout $BRANCH
+      git pull
       popd
     fi
 
+    echo ""
     echo "  Most recent changelog message:"
     pushd $CACHE
     echo "    $(git log -1 --pretty=format:%B | cat)"
