@@ -239,10 +239,10 @@ info
 echo ""
 
 if [ $CLEAN -eq 1 ] && [ -d $CACHE ]; then
-  mv "$CACHE" "$TMP/.hangover-cache"
+  mv "$CACHE" "$TMPDIR/.hangover-cache"
   rm -rf "$WINEPREFIX"
   mkdir "$WINEPREFIX"
-  mv "$TMP/.hangover-cache" "$CACHE"
+  mv "$TMPDIR/.hangover-cache" "$CACHE"
 elif [ $NUKE -eq 1 ]; then
   rm -rf "$WINEPREFIX"
   rm ~/bin/hangover-*
