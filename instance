@@ -202,20 +202,6 @@ info() {
       echo "  Source:     $REPO"
       ;;
   esac
-
-  if [ -d $CACHE ]; then
-    pushd $CACHE
-    if [ -d .git ]; then
-      echo ""
-      echo "  Most recent git log:"
-      echo "    $(git log -1 --pretty=format:%B | cat)"
-    elif [ -f LASTCHANGE ]; then
-      echo ""
-      echo "  Most recent change message:"
-      echo "    $(cat LASTCHANGE)"
-    fi
-    popd
-  fi
 }
 
 startx() {
