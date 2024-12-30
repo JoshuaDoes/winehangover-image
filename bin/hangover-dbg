@@ -1,4 +1,4 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 export HANGOVERDBG=1
-hangover
+hangover-run

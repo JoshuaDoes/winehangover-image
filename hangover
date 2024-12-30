@@ -1,0 +1,102 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+export MAINTAINER=JoshuaDoes
+export VER="v1.13.0"
+export DL=git
+export HOSTER=JoshuaDoes
+export PROVIDER=GitHub
+export REPO="https://github.com/JoshuaDoes/winehangover-image"
+export BRANCH=dev
+
+export WINEPART=".hangover"
+export WINEPREFIX="$HOME/$WINEPART"
+export CACHE="$WINEPREFIX/.cache"
+
+HOST="https://raw.githubusercontent.com/JoshuaDoes/winehangover-image/refs/heads/dev"
+INST="$TMPDIR"
+SCRIPT="instance"
+CMD=""
+
+info() {
+  echo ""
+  echo "  Termux/Hangover Manager"
+  echo "  > $VER"
+  echo ""
+  echo "  Maintainer: $MAINTAINER"
+  echo "  Hoster:     $HOSTER"
+  echo "  Provider:   $PROVIDER"
+  case $DL in
+    git)
+      echo "  Repo:       $REPO"
+      echo "  Branch:     $BRANCH"
+      ;;
+    direct)
+      echo "  Source:     $REPO"
+      ;;
+  esac
+
+  if [ -d $CACHE ]; then
+    echo ""
+    echo "  Most recent changelog message:"
+    pushd $CACHE
+    if [ -d .git ]; then
+      echo "    $(git log -1 --pretty=format:%B | cat)"
+    elif [ -f LASTCOMMITMSG ]; then
+      echo "    $(cat LASTCOMMITMSG)"
+    fi
+    popd
+  fi
+}
+
+clear
+info
+echo ""
+
+PS3='  What do you want to do? (1-4) '
+menuvar=("Launch" "Debug" "Update" "Fresh Update" "Reinstall" "Uninstall" "Exit")
+if [ ! -d "$WINEPREFIX" ]; then
+  PS3='  What do you want to do? (1) '
+  menuvar=("Install" "Exit")
+fi
+select menuvar in "${menuvar[@]}"
+do
+  case $menuvar in
+    "Launch")
+      hangover-run
+      exit 0
+      break;;
+    "Debug")
+      hangover-dbg
+      exit 0
+      break;;
+    "Update")
+      CMD="update"
+      break;;
+    "Fresh Update")
+      CMD="cleanupdate"
+      break;;
+    "Install")
+      CMD="install"
+      break;;
+    "Reinstall")
+      CMD="cleaninstall"
+      break;;
+    "Uninstall")
+      CMD="nuke"
+      break;;
+    "Exit")
+      exit 0
+      break;;
+    *) echo "Invalid option.";;
+  esac
+done
+
+echo ""
+pkg install -y wget
+mkdir -p "$INST"
+wget -O "$INST/$SCRIPT" "$HOST/$SCRIPT"
+chmod +x "$INST/$SCRIPT"
+
+echo ""
+bash "$INST/$SCRIPT" "$CMD"
+rm "$INST/$SCRIPT"

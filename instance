@@ -1,7 +1,41 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
+export INSTALL=0
+export UPDATE=0
+export CLEAN=0
+export NUKE=0
+
+case "$1" in
+  "install")
+    INSTALL=1
+    ;;
+  "update")
+    UPDATE=1
+    ;;
+  "clean")
+    INSTALL=1
+    CLEAN=1
+    ;;
+  "cleanupdate")
+    UPDATE=1
+    CLEAN=1
+    ;;
+  "nuke")
+    NUKE=1
+    ;;
+  *)
+    echo "Usage: $0 {update|install|clean|cleanupdate|nuke}"
+    exit 1
+    ;;
+esac
+
 export MAINTAINER=JoshuaDoes
-export VER="v1.12.3"
+export VER="v1.13.0"
+export DL=git
+export HOSTER=JoshuaDoes
+export PROVIDER=GitHub
+export REPO="https://github.com/JoshuaDoes/winehangover-image"
+export BRANCH=dev
 
 export WINEPART=".hangover"
 export WINEPREFIX="$HOME/$WINEPART"
@@ -145,20 +179,26 @@ killconfirmed() {
 
 info() {
   echo ""
-  echo "  Termux/Hangover Installer & Updater"
-  echo "  > $VER"
+  echo "  Termux/Hangover $VER"
+  if [ $UPDATE -eq 1 ]; then
+    echo "  > Updater"
+  elif [ $INSTALL -eq 1 ]; then
+    echo "  > Installer"
+  elif [ $CLEAN -eq 1 ]; then
+    echo "  > Clean Installer"
+  elif [ $NUKE -eq 1 ]; then
+    echo "  > Nuker"
+  fi
   echo ""
   echo "  Maintainer: $MAINTAINER"
+  echo "  Hoster:     $HOSTER"
+  echo "  Provider:   $PROVIDER"
   case $DL in
     git)
-      echo "  Hoster:     $HOSTER"
-      echo "  Provider:   $PROVIDER"
       echo "  Repo:       $REPO"
       echo "  Branch:     $BRANCH"
       ;;
     direct)
-      echo "  Hoster:     $HOSTER"
-      echo "  Provider:   $PROVIDER"
       echo "  Source:     $REPO"
       ;;
   esac
@@ -197,6 +237,31 @@ stopall
 clear
 info
 echo ""
+
+if [ $CLEAN -eq 1 ] && [ -d $CACHE ]; then
+  mv "$CACHE" "$TMP/.hangover-cache"
+  rm -rf "$WINEPREFIX"
+  mkdir "$WINEPREFIX"
+  mv "$TMP/.hangover-cache" "$CACHE"
+elif [ $NUKE -eq 1 ]; then
+  rm -rf "$WINEPREFIX"
+  rm ~/bin/hangover-*
+  rm ~/bin/hangover
+  rm ~/bin/install-hangover
+
+  echo ""
+  echo "  * Nuke complete!"
+  echo ""
+  exit 0
+fi
+
+if [ $UPDATE -eq 1 ]; then
+  if [ ! -d $WINEPREFIX ]; then
+    echo "  * Cannot perform an update without install!"
+    echo ""
+    exit 1
+  fi
+fi
 
 PS3='  Which download mirror should we use? (1-3) '
 menuvar=("https git.joshuado.es" "https github.com" "ssh github.com" "Exit")
@@ -294,21 +359,23 @@ clear
 info
 
 # Migrations to latest update
-if [ -d $TMPDIR/hangover ]; then
-  echo ""
-  echo "  > Removing legacy download cache"
-  rm -rf $TMPDIR/hangover
-fi
-if [ ! -d "$WINEPREFIX" ]; then
-  for INST in "$HOME/.winehangover"; do
-    if [ -d "$INST" ]; then
-      echo ""
-      echo "  > Migrating image to:"
-      echo "    $WINEPREFIX"
-      mv "$INST" "$WINEPREFIX"
-      break
-    fi
-  done
+if [ $UPDATE -eq 1 ]; then
+  if [ -d $TMPDIR/hangover ]; then
+    echo ""
+    echo "  > Removing legacy download cache"
+    rm -rf $TMPDIR/hangover
+  fi
+  if [ ! -d "$WINEPREFIX" ]; then
+    for INST in "$HOME/.winehangover"; do
+      if [ -d "$INST" ]; then
+        echo ""
+        echo "  > Migrating image to:"
+        echo "    $WINEPREFIX"
+        mv "$INST" "$WINEPREFIX"
+        break
+      fi
+    done
+  fi
 fi
 
 echo ""
@@ -320,7 +387,7 @@ case $DL in
       echo ""
       rm -rf $CACHE
       git clone --filter=tree:0 "$REPO" -b $BRANCH $CACHE
-    else
+    elif [ $UPDATE -eq 1 ]; then
       echo "  Updating image!"
       echo ""
       pushd $CACHE
@@ -338,14 +405,17 @@ case $DL in
     popd
     ;;
   direct)
-    echo "  * Direct not yet implemented!"
+    echo "  * Direct image downloading not yet implemented!"
     echo ""
     exit 1
     ;;
   *)
-    echo "  * Download type $DL is not supported!"
-    echo ""
-    exit 1
+    if [ $INSTALL -eq 1] || [ $UPDATE -eq 1 ]; then
+      echo "  * Download type $DL is not supported!"
+      echo ""
+      exit 1
+    fi
+    ;;
 esac
 
 mkdir $WINEPREFIX
@@ -401,18 +471,17 @@ popd
 echo "  > Installing Hangover scripts"
 mkdir ~/bin
 cp \
-  $CACHE/bin/hangover $CACHE/bin/hangover-debug \
-  $CACHE/hangover-install ~/bin/
+  $CACHE/bin/hangover-run $CACHE/bin/hangover-dbg \
+  $CACHE/hangover ~/bin/
+chmod +x ~/bin/hangover-run
+chmod +x ~/bin/hangover-dbg
 chmod +x ~/bin/hangover
-chmod +x ~/bin/hangover-debug
-chmod +x ~/bin/hangover-install
 
 # Remove any leftover scripts
 rm ~/bin/install-hangover
+rm ~/bin/hangover-debug
 
-FRESH=1
 if [ -d $C ]; then
-  FRESH=0
   echo "  > Updating the Wine prefix"
   wineboot --update
 else
@@ -482,10 +551,10 @@ rm "$Z"
 ln -s "$EXTERNAL_STORAGE" "$Z"
 
 echo ""
-if [ $FRESH -eq 1 ]; then
-  echo "  Install complete!"
-else
+if [ $UPDATE -eq 1 ]; then
   echo "  Update complete!"
+elif [ $INSTALL -eq 1 ]; then
+  echo "  Install complete!"
 fi
 echo ""
 echo "  Cache location:"
