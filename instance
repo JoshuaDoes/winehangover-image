@@ -414,15 +414,8 @@ echo ""
 echo "  Patching Hangover image unconditionally..."
 echo "  > Installing packages"
 pkg install -y x11-repo
-pkg install -y termux-x11-nightly pulseaudio \
-  vulkan-tools vulkan-loader vulkan-loader-generic \
-  mesa mesa-demos opengl \
-  freeglut glu fontconfig freetype \
-  libxrandr libxcomposite libx11 libxrender libxshmfence \
-  libdrm libwayland libandroid-shmem \
-  libandroid-spawn \
-  xz-utils cabextract libgnutls \
-  openbox #xfce4
+pkg install -y fontconfig freetype git gnutls libandroid-shmem libandroid-shmem-static libx11 xorgproto libdrm libpixman libjpeg-turbo libgmp libgnutls mesa-demos osmesa pulseaudio termux-x11-nightly vulkan-tools xtrans libxxf86vm libxrandr xorg-xrandr xorg-font-util xorg-util-macros libxfont2 libxkbfile libpciaccess xcb-util-renderutil xcb-util-image xcb-util-keysyms xcb-util-wm xorg-xkbcomp xkeyboard-config libxdamage libxinerama libxshmfence libandroid-spawn libxcb libxcomposite libxcursor libxfixes libxrender termux-x11-nightly openbox
+
 case $PLAT in
   hangover)
     echo "  > Installing Mesa Vulkan ICD wrapper for $PLATS"
@@ -430,6 +423,7 @@ case $PLAT in
     ;;
   *) echo "  > Skipping ICD";;
 esac
+
 echo "  > Installing Termux:X11"
 termux-open $CACHE/apk/termux-x11.apk
 echo "  ! If this fails, please manually install:"
